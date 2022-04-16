@@ -1,0 +1,146 @@
+{
+	"info": {
+		"_postman_id": "9ecd16d2-759f-4da8-98fc-769321b87de9",
+		"name": "第二週：Node.js NPM 整合 MongoDB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "取得貼文",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:3005/posts",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3005",
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "新增貼文",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"宥\",\r\n    \"content\": \"我不想上班\",\r\n    \"image\": \"http://dummyimage.com/214x100.png/cc0000/ffffff\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3005/posts",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3005",
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "刪除所有貼文",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:3005/posts",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3005",
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "刪除單筆貼文",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3005/posts/62597abcdf9d475572529707",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3005",
+					"path": [
+						"posts",
+						"62597abcdf9d475572529707"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "編輯貼文內容",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"content\": \"今天要吃飯\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3005/posts/62597aef1c7df26f20d3fff7",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3005",
+					"path": [
+						"posts",
+						"62597aef1c7df26f20d3fff7"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
