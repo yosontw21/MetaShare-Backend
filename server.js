@@ -62,11 +62,11 @@ const requestListener = async (req, res) => {
 					errorHandle(res);
 				}
 			} catch (err) {
-				errorHandle(res);
+				errorHandle(res, err.message);
 			}
 		});
 	} else if (reqUrl == '/posts' && reqMethod == 'DELETE') {
-		const delPost = await Post.deleteMany({});
+		const delAllPost = await Post.deleteMany({});
 		res.writeHead(200, headers);
 		res.write(
 			JSON.stringify({
@@ -94,7 +94,7 @@ const requestListener = async (req, res) => {
 				errorHandle(res);
 			}
 		} catch (err) {
-			errorHandle(res);
+			errorHandle(res, err.message);
 		}
 	} else if (urlId && reqMethod == 'PATCH') {
 		req.on('end', async () => {
@@ -118,7 +118,7 @@ const requestListener = async (req, res) => {
 					errorHandle(res);
 				}
 			} catch (err) {
-				errorHandle(res);
+				errorHandle(res, err.message);
 			}
 		});
 	} else if (reqMethod == 'OPTIONS') {
