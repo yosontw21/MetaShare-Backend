@@ -119,10 +119,10 @@ const requestListener = async (req, res) => {
 			try {
 				const id = req.url.split('/').pop();
 				const editContent = JSON.parse(body).content;
-				if (editContent !== undefined) {
-					const editPostContent = await Post.findByIdAndUpdate(id, {
-						content: editContent
-					});
+				const editPostContent = await Post.findByIdAndUpdate(id, {
+					content: editContent
+				});
+				if (editContent !== undefined && editPostContent !== null) {
 					res.writeHead(200, headers);
 					res.write(
 						JSON.stringify({
@@ -168,5 +168,5 @@ const requestListener = async (req, res) => {
 };
 
 const server = http.createServer(requestListener);
-const port = process.env.PORT || 3005
+const port = process.env.PORT || 3005;
 server.listen(port);
