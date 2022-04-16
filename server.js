@@ -1,7 +1,13 @@
 const http = require('http');
-const Post = require('./models/post');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+
+// models
+const Post = require('./models/post');
+
+// controllers
+const headers = require('./controllers/header');
+const errorHandle = require('./controllers/errorHandle');
 
 dotenv.config({ path: './config.env' });
 
@@ -16,13 +22,6 @@ mongoose
 	.catch(() => console.log('連線失敗'));
 
 const requestListener = async (req, res) => {
-	const headers = {
-		'Access-Control-Allow-Headers':
-			'Content-Type, Authorization, Content-Length, X-Requested-With',
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': 'PATCH, POST, GET,OPTIONS,DELETE',
-		'Content-Type': 'application/json'
-	};
 	const reqUrl = req.url;
 	const reqMethod = req.method;
 	const urlId = req.url.startsWith('/posts/');
@@ -45,29 +44,25 @@ const requestListener = async (req, res) => {
 		req.on('end', async () => {
 			try {
 				const post = JSON.parse(body);
-				const addPost = await Post.create({
-					name: post.name,
-					content: post.content,
-					image: post.image
-				});
-				res.writeHead(200, headers);
-				res.write(
-					JSON.stringify({
-						status: 'success',
-						post: addPost
-					})
-				);
-				res.end();
+				if (post.image !== undefined) {
+					const addPost = await Post.create({
+						name: post.name,
+						content: post.content,
+						image: post.image
+					});
+					res.writeHead(200, headers);
+					res.write(
+						JSON.stringify({
+							status: 'success',
+							post: addPost
+						})
+					);
+					res.end();
+				} else {
+					errorHandle(res);
+				}
 			} catch (err) {
-				res.writeHead(400, headers);
-				res.write(
-					JSON.stringify({
-						status: 'ERROR',
-						message: '欄位沒有正確',
-						err: err
-					})
-				);
-				res.end();
+				errorHandle(res);
 			}
 		});
 	} else if (reqUrl == '/posts' && reqMethod == 'DELETE') {
@@ -77,7 +72,7 @@ const requestListener = async (req, res) => {
 			JSON.stringify({
 				status: 'success',
 				post: [],
-				message: '資料刪除成功'
+				message: '刪除所有資料成功'
 			})
 		);
 		res.end();
@@ -90,29 +85,16 @@ const requestListener = async (req, res) => {
 				res.write(
 					JSON.stringify({
 						status: 'success',
+						delSingle,
 						message: '資料單筆刪除成功'
 					})
 				);
 				res.end();
 			} else {
-				res.writeHead(400, headers);
-				res.write(
-					JSON.stringify({
-						status: 'ERROR',
-						message: '欄位沒有正確，或是找不到 id'
-					})
-				);
-				res.end();
+				errorHandle(res);
 			}
 		} catch (err) {
-			res.writeHead(400, headers);
-			res.write(
-				JSON.stringify({
-					status: 'ERROR',
-					message: '欄位沒有正確，或是找不到 id'
-				})
-			);
-			res.end();
+			errorHandle(res);
 		}
 	} else if (urlId && reqMethod == 'PATCH') {
 		req.on('end', async () => {
@@ -127,29 +109,16 @@ const requestListener = async (req, res) => {
 					res.write(
 						JSON.stringify({
 							status: 'success',
-							editPostContent
+							editPostContent,
+							message: '修改單筆刪除成功'
 						})
 					);
 					res.end();
 				} else {
-					res.writeHead(400, headers);
-					res.write(
-						JSON.stringify({
-							status: 'ERROR',
-							message: '欄位沒有正確，或是找不到 id'
-						})
-					);
-					res.end();
+					errorHandle(res);
 				}
 			} catch (err) {
-				res.writeHead(400, headers);
-				res.write(
-					JSON.stringify({
-						status: 'ERROR',
-						message: '欄位沒有正確，或是找不到 id'
-					})
-				);
-				res.end();
+				errorHandle(res);
 			}
 		});
 	} else if (reqMethod == 'OPTIONS') {
