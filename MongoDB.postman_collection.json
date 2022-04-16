@@ -11,15 +11,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:3005/posts",
-					"protocol": "http",
+					"raw": "https://warm-sea-66745.herokuapp.com/posts",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"warm-sea-66745",
+						"herokuapp",
+						"com"
 					],
-					"port": "3005",
 					"path": [
 						"posts"
 					]
@@ -42,15 +40,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:3005/posts",
-					"protocol": "http",
+					"raw": "https://warm-sea-66745.herokuapp.com/posts",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"warm-sea-66745",
+						"herokuapp",
+						"com"
 					],
-					"port": "3005",
 					"path": [
 						"posts"
 					]
@@ -64,15 +60,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:3005/posts",
-					"protocol": "http",
+					"raw": "https://warm-sea-66745.herokuapp.com/posts",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"warm-sea-66745",
+						"herokuapp",
+						"com"
 					],
-					"port": "3005",
 					"path": [
 						"posts"
 					]
@@ -93,15 +87,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:3005/posts/62597abcdf9d475572529707",
-					"protocol": "http",
+					"raw": "https://warm-sea-66745.herokuapp.com/posts/62597abcdf9d475572529707",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"warm-sea-66745",
+						"herokuapp",
+						"com"
 					],
-					"port": "3005",
 					"path": [
 						"posts",
 						"62597abcdf9d475572529707"
@@ -125,18 +117,16 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:3005/posts/62597aef1c7df26f20d3fff7",
-					"protocol": "http",
+					"raw": "https://warm-sea-66745.herokuapp.com/posts/625a1d0f5c37b392f833657b",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"warm-sea-66745",
+						"herokuapp",
+						"com"
 					],
-					"port": "3005",
 					"path": [
 						"posts",
-						"62597aef1c7df26f20d3fff7"
+						"625a1d0f5c37b392f833657b"
 					]
 				}
 			},
