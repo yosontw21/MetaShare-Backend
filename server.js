@@ -7,8 +7,7 @@ const Post = require('./models/post');
 
 // base
 const headers = require('./base/header');
-const errorHandle = require('./base/errorHandle');
-const successHandle = require('./base/successHandle');
+const {successHandle, errorHandle} = require('./base/responseHandle');
 
 dotenv.config({ path: './config.env' });
 
