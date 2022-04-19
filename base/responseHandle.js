@@ -1,6 +1,6 @@
 const headers = require('./header');
 
-const handleSuccess = (res, data) => {
+const successHandle = (res, data) => {
 	res.writeHead(200, headers);
 	res.write(
 		JSON.stringify({
@@ -23,4 +23,4 @@ const errorHandle = (res, err) => {
 	res.end();
 };
 
-module.exports = {handleSuccess, errorHandle};
+module.exports = { successHandle, errorHandle };
