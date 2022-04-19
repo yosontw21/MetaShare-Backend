@@ -7,7 +7,8 @@ const Post = require('./models/post');
 
 // base
 const headers = require('./base/header');
-const {successHandle, errorHandle} = require('./base/responseHandle');
+const { successHandle, errorHandle } = require('./base/responseHandle');
+const { log } = require('console');
 
 dotenv.config({ path: './config.env' });
 
@@ -44,7 +45,7 @@ const requestListener = async (req, res) => {
 		req.on('end', async () => {
 			try {
 				const post = JSON.parse(body);
-				if (post.content) {
+				if (post.content && post.tags !== undefined) {
 					const addPost = await Post.create({
 						name: post.name,
 						content: post.content,
