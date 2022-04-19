@@ -5,9 +5,10 @@ const dotenv = require('dotenv');
 // models
 const Post = require('./models/post');
 
-// controllers
-const headers = require('./controllers/header');
-const errorHandle = require('./controllers/errorHandle');
+// base
+const headers = require('./base/header');
+const errorHandle = require('./base/errorHandle');
+const successHandle = require('./base/successHandle');
 
 dotenv.config({ path: './config.env' });
 
@@ -19,7 +20,7 @@ const DB = process.env.DATABASE.replace(
 mongoose
 	.connect(DB)
 	.then(() => console.log('成功連線到資料庫'))
-	.catch(() => console.log('連線失敗'));
+	.catch((err) => console.log(err, '連線失敗'));
 
 const requestListener = async (req, res) => {
 	const reqUrl = req.url;
@@ -44,20 +45,15 @@ const requestListener = async (req, res) => {
 		req.on('end', async () => {
 			try {
 				const post = JSON.parse(body);
-				if (post.image !== undefined) {
+				if (post.content) {
 					const addPost = await Post.create({
 						name: post.name,
 						content: post.content,
+						tags: post.tags,
+						type: post.type,
 						image: post.image
 					});
-					res.writeHead(200, headers);
-					res.write(
-						JSON.stringify({
-							status: 'success',
-							post: addPost
-						})
-					);
-					res.end();
+					successHandle(res, addPost);
 				} else {
 					errorHandle(res);
 				}
@@ -67,29 +63,13 @@ const requestListener = async (req, res) => {
 		});
 	} else if (reqUrl == '/posts' && reqMethod == 'DELETE') {
 		const delAllPost = await Post.deleteMany({});
-		res.writeHead(200, headers);
-		res.write(
-			JSON.stringify({
-				status: 'success',
-				post: [],
-				message: '刪除所有資料成功'
-			})
-		);
-		res.end();
+		successHandle(res, delAllPost);
 	} else if (urlId && reqMethod == 'DELETE') {
 		try {
 			const id = req.url.split('/').pop();
 			const delSingle = await Post.findByIdAndDelete(id);
 			if (delSingle !== null) {
-				res.writeHead(200, headers);
-				res.write(
-					JSON.stringify({
-						status: 'success',
-						delSingle,
-						message: '資料單筆刪除成功'
-					})
-				);
-				res.end();
+				successHandle(res, delSingle);
 			} else {
 				errorHandle(res);
 			}
@@ -105,15 +85,7 @@ const requestListener = async (req, res) => {
 					content: editContent
 				});
 				if (editContent !== undefined && editPostContent !== null) {
-					res.writeHead(200, headers);
-					res.write(
-						JSON.stringify({
-							status: 'success',
-							editPostContent,
-							message: '修改單筆刪除成功'
-						})
-					);
-					res.end();
+					successHandle(res, editContent);
 				} else {
 					errorHandle(res);
 				}

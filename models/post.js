@@ -3,11 +3,22 @@ const postScheam = new mongoose.Schema(
 	{
 		name: {
 			type: String,
-			required: [ true, '內容未填寫' ]
+			required: [ true, '貼為姓名未填寫' ]
+		},
+		tags: [
+			{
+				type: String,
+				required: [true, '貼文標籤 tags 未填寫']
+			}
+		],
+		type: {
+			type: String,
+			enum:['group', 'person'],
+			required: [true, '貼文類型 type 未填寫']
 		},
 		content: {
 			type: String,
-			required: [ true, '內容未填寫' ]
+			required: [ true, 'Content 未填寫' ]
 		},
 		createdAt: {
 			type: Date,
@@ -19,6 +30,10 @@ const postScheam = new mongoose.Schema(
 			default: ''
 		},
 		likes: {
+			type: Number,
+			default: 0
+		},
+		comments: {
 			type: Number,
 			default: 0
 		}
