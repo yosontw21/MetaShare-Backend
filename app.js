@@ -8,7 +8,7 @@ app.use(morgan('dev'));
 app.use(cors());
 
 // Routers
-const postRouter = require('./routers/postRouter');
+const postRouter = require('./routes/postRouter');
 app.use('/api/posts', postRouter);
 
 module.exports = app;
