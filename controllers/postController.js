@@ -6,7 +6,7 @@ const { successHandle, errorHandle } = require('../base/responseHandle');
 
 exports.getPosts = async (req, res) => {
 	const posts = await Post.find();
-	const result = `目前資料總共有 ${posts.length} 筆`;
+	const result = `目前貼文總共有 ${posts.length} 筆`;
 	successHandle(res, posts, result);
 };
 
