@@ -5,8 +5,9 @@ const Post = require('../models/postModel');
 const { successHandle, errorHandle } = require('../base/responseHandle');
 
 exports.getPosts = async (req, res) => {
-	const post = await Post.find();
-	successHandle(res, post);
+	const posts = await Post.find();
+	const result = `目前資料總共有 ${posts.length} 筆`;
+	successHandle(res, posts, result);
 };
 
 exports.createPost = async (req, res) => {
