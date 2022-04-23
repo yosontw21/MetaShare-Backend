@@ -1,16 +1,9 @@
-const http = require('http');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-
-// models
-const Post = require('./models/post');
-
-// base
-const headers = require('./base/header');
-const { successHandle, errorHandle } = require('./base/responseHandle');
-const { log } = require('console');
-
-dotenv.config({ path: './config.env' });
+dotenv.config({
+	path: './config.env'
+});
+const app = require('./app');
 
 const DB = process.env.DATABASE.replace(
 	'<password>',
@@ -19,95 +12,26 @@ const DB = process.env.DATABASE.replace(
 
 mongoose
 	.connect(DB)
-	.then(() => console.log('成功連線到資料庫'))
-	.catch((err) => console.log(err, '連線失敗'));
+	.then(() => console.log('connected to the Database...'))
+	.catch((err) => console.log(err));
 
-const requestListener = async (req, res) => {
-	const reqUrl = req.url;
-	const reqMethod = req.method;
-	const urlId = req.url.startsWith('/posts/');
-
-	let body = '';
-	req.on('data', (chuck) => {
-		body += chuck;
-	});
-	if (reqUrl == '/posts' && reqMethod == 'GET') {
-		const post = await Post.find();
-		res.writeHead(200, headers);
-		res.write(
-			JSON.stringify({
-				status: 'success',
-				post
-			})
-		);
-		res.end();
-	} else if (reqUrl == '/posts' && reqMethod == 'POST') {
-		req.on('end', async () => {
-			try {
-				const post = JSON.parse(body);
-				if (post.content && post.tags !== undefined) {
-					const addPost = await Post.create({
-						name: post.name,
-						content: post.content,
-						tags: post.tags,
-						type: post.type,
-						image: post.image
-					});
-					successHandle(res, addPost);
-				} else {
-					errorHandle(res);
-				}
-			} catch (err) {
-				errorHandle(res, err.message);
-			}
-		});
-	} else if (reqUrl == '/posts' && reqMethod == 'DELETE') {
-		const delAllPost = await Post.deleteMany({});
-		successHandle(res, delAllPost);
-	} else if (urlId && reqMethod == 'DELETE') {
-		try {
-			const id = req.url.split('/').pop();
-			const delSingle = await Post.findByIdAndDelete(id);
-			if (delSingle !== null) {
-				successHandle(res, delSingle);
-			} else {
-				errorHandle(res);
-			}
-		} catch (err) {
-			errorHandle(res, err.message);
-		}
-	} else if (urlId && reqMethod == 'PATCH') {
-		req.on('end', async () => {
-			try {
-				const id = req.url.split('/').pop();
-				const editContent = JSON.parse(body).content;
-				const editPostContent = await Post.findByIdAndUpdate(id, {
-					content: editContent
-				});
-				if (editContent !== undefined && editPostContent !== null) {
-					successHandle(res, editContent);
-				} else {
-					errorHandle(res);
-				}
-			} catch (err) {
-				errorHandle(res, err.message);
-			}
-		});
-	} else if (reqMethod == 'OPTIONS') {
-		res.writeHead(200, headers);
-		res.end();
-	} else {
-		res.writeHead(404, headers);
-		res.write(
-			JSON.stringify({
-				status: 'ERROR',
-				message: '路徑不正確'
-			})
-		);
-		res.end();
-	}
-};
-
-const server = http.createServer(requestListener);
 const port = process.env.PORT || 3005;
-server.listen(port);
+app.listen(port, () => {
+	console.log('running Local Server...');
+});
+
+// Error 錯誤回傳訊息
+app.use((req, res, next) => {
+	res.status(404).json({
+		status: 'ERROR',
+		message: '找不到網頁 404 Not Found，請重新確認'
+	});
+});
+
+app.use((err, req, res, next) => {
+	const errorMsg = err.message;
+	res.status(500).json({
+		status: 'ERROR',
+		message: errorMsg
+	});
+});

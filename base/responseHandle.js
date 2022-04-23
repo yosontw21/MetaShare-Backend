@@ -1,26 +1,16 @@
-const headers = require('./header');
-
 const successHandle = (res, data) => {
-	res.writeHead(200, headers);
-	res.write(
-		JSON.stringify({
-			status: 'success',
-			data
-		})
-	);
-	res.end();
+	res.status(200).json({
+		status: 'success',
+		data
+	});
 };
 
 const errorHandle = (res, err) => {
-	res.writeHead(400, headers);
-	res.write(
-		JSON.stringify({
-			status: 'ERROR',
-			message: '欄位沒有正確，或是找不到 id',
-			err
-		})
-	);
-	res.end();
+	res.status(400).json({
+		status: 'ERROR',
+		message: '欄位沒有正確，或是找不到 id',
+		err
+	});
 };
 
 module.exports = { successHandle, errorHandle };
