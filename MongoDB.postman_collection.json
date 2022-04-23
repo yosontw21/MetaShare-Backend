@@ -7,19 +7,20 @@
 	"item": [
 		{
 			"name": "取得貼文",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:3005/api/posts",
-					"protocol": "http",
+					"raw": "https://warm-sea-66745.herokuapp.com/api/posts",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"warm-sea-66745",
+						"herokuapp",
+						"com"
 					],
-					"port": "3005",
 					"path": [
 						"api",
 						"posts"
@@ -35,7 +36,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"宥\",\r\n    \"content\": \"我不想上班\",\r\n    \"typ\": \"group\",\r\n    \"tags\": \"幹話\",\r\n    \"image\": \"http://dummyimage.com/214x100.png/cc0000/ffffff\"\r\n}",
+					"raw": "{\r\n    \"name\": \"宥\",\r\n    \"content\": \"我不想上班\",\r\n    \"type\": \"person\",\r\n    \"tags\": \"幹話\",\r\n    \"image\": \"http://dummyimage.com/214x100.png/cc0000/ffffff\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -43,15 +44,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:3005/api/posts",
-					"protocol": "http",
+					"raw": "https://warm-sea-66745.herokuapp.com/api/posts",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"warm-sea-66745",
+						"herokuapp",
+						"com"
 					],
-					"port": "3005",
 					"path": [
 						"api",
 						"posts"
@@ -66,7 +65,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/posts",
+					"raw": "https://warm-sea-66745.herokuapp.com/api/posts",
 					"protocol": "https",
 					"host": [
 						"warm-sea-66745",
@@ -74,6 +73,7 @@
 						"com"
 					],
 					"path": [
+						"api",
 						"posts"
 					]
 				}
@@ -93,7 +93,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/posts/62597abcdf9d475572529707",
+					"raw": "https://warm-sea-66745.herokuapp.com/api/posts/626374a0f602cbff4e6791db",
 					"protocol": "https",
 					"host": [
 						"warm-sea-66745",
@@ -101,8 +101,9 @@
 						"com"
 					],
 					"path": [
+						"api",
 						"posts",
-						"62597abcdf9d475572529707"
+						"626374a0f602cbff4e6791db"
 					]
 				}
 			},
@@ -115,7 +116,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"content\": \"今天要睡覺\"\r\n}",
+					"raw": "{\r\n    \"content\": \"今天要完成第三周作業\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -123,19 +124,17 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:3005/api/posts/62636501b2aa386dc3977403",
-					"protocol": "http",
+					"raw": "https://warm-sea-66745.herokuapp.com/api/posts/626374c1f602cbff4e6791e0",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"warm-sea-66745",
+						"herokuapp",
+						"com"
 					],
-					"port": "3005",
 					"path": [
 						"api",
 						"posts",
-						"62636501b2aa386dc3977403"
+						"626374c1f602cbff4e6791e0"
 					]
 				}
 			},
