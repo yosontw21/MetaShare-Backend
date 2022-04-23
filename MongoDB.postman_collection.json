@@ -11,14 +11,17 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/posts",
-					"protocol": "https",
+					"raw": "http://127.0.0.1:3005/api/posts",
+					"protocol": "http",
 					"host": [
-						"warm-sea-66745",
-						"herokuapp",
-						"com"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
+					"port": "3005",
 					"path": [
+						"api",
 						"posts"
 					]
 				}
@@ -32,7 +35,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"宥\",\r\n    \"content\": \"我不想上班\",\r\n    \"image\": \"http://dummyimage.com/214x100.png/cc0000/ffffff\"\r\n}",
+					"raw": "{\r\n    \"name\": \"宥\",\r\n    \"content\": \"我不想上班\",\r\n    \"typ\": \"group\",\r\n    \"tags\": \"幹話\",\r\n    \"image\": \"http://dummyimage.com/214x100.png/cc0000/ffffff\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -40,14 +43,17 @@
 					}
 				},
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/posts",
-					"protocol": "https",
+					"raw": "http://127.0.0.1:3005/api/posts",
+					"protocol": "http",
 					"host": [
-						"warm-sea-66745",
-						"herokuapp",
-						"com"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
+					"port": "3005",
 					"path": [
+						"api",
 						"posts"
 					]
 				}
@@ -109,7 +115,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"content\": \"今天要吃飯\"\r\n}",
+					"raw": "{\r\n    \"content\": \"今天要睡覺\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -117,16 +123,19 @@
 					}
 				},
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/posts/625a1d0f5c37b392f833657b",
-					"protocol": "https",
+					"raw": "http://127.0.0.1:3005/api/posts/62636501b2aa386dc3977403",
+					"protocol": "http",
 					"host": [
-						"warm-sea-66745",
-						"herokuapp",
-						"com"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
+					"port": "3005",
 					"path": [
+						"api",
 						"posts",
-						"625a1d0f5c37b392f833657b"
+						"62636501b2aa386dc3977403"
 					]
 				}
 			},
