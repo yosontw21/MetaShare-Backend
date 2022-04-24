@@ -13,12 +13,13 @@ exports.getPosts = async (req, res) => {
 exports.createPost = async (req, res) => {
 	try {
 		const post = req.body;
+		const [ name, content, type, tags, image ] = Object.values(post);
 		const addPost = await Post.create({
-			name: post.name,
-			content: post.content,
-			type: post.type,
-			tags: post.tags,
-			image: post.image
+			name,
+			content,
+			type,
+			tags,
+			image
 		});
 		if (addPost.content) {
 			successHandle(res, addPost);
@@ -52,18 +53,22 @@ exports.delPost = async (req, res) => {
 exports.updatePost = async (req, res) => {
 	try {
 		const id = req.params.id;
-		const postContent = req.body.content;
+		const post = req.body;
+		const [ content, type, tags, image ] = Object.values(post);
 
 		const editPost = await Post.findByIdAndUpdate(
 			id,
 			{
-				content: postContent
+				content,
+				type,
+				tags,
+				image
 			},
 			{
 				new: true
 			}
 		);
-		if (postContent !== undefined && editPost !== null) {
+		if (content !== undefined && editPost !== null) {
 			successHandle(res, editPost);
 		} else {
 			errorHandle(res);
