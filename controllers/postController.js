@@ -13,7 +13,8 @@ exports.getPosts = async (req, res) => {
 exports.createPost = async (req, res) => {
 	try {
 		const post = req.body;
-		const [ name, content, type, tags, image ] = Object.values(post);
+		// const [ name, content, type, tags, image ] = Object.values(post);
+		const { name, content, type, tags, image } = post;
 		const addPost = await Post.create({
 			name,
 			content,
@@ -54,8 +55,8 @@ exports.updatePost = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const post = req.body;
-		const [ content, type, tags, image ] = Object.values(post);
-
+		// const [ content, type, tags, image ] = Object.values(post);
+		const { content, type, tags, image } = post;
 		const editPost = await Post.findByIdAndUpdate(
 			id,
 			{
