@@ -16,13 +16,9 @@ exports.createPost = async (req, res) => {
 		// const [ name, content, type, tags, image ] = Object.values(post);
 		const { name, content, type, tags, image } = post;
 		const addPost = await Post.create({
-			name,
-			content,
-			type,
-			tags,
-			image
+			...post
 		});
-		if (addPost.content) {
+		if (image && tags) {
 			successHandle(res, addPost);
 		} else {
 			errorHandle(res);
@@ -59,17 +55,12 @@ exports.updatePost = async (req, res) => {
 		const { content, type, tags, image } = post;
 		const editPost = await Post.findByIdAndUpdate(
 			id,
-			{
-				content,
-				type,
-				tags,
-				image
-			},
+			{ ...post },
 			{
 				new: true
 			}
 		);
-		if (content !== undefined && editPost !== null) {
+		if (content && type && tags && image && editPost !== null) {
 			successHandle(res, editPost);
 		} else {
 			errorHandle(res);
