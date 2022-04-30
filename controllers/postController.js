@@ -7,7 +7,7 @@ const { successHandle, errorHandle } = require('../base/responseHandle');
 
 exports.getPosts = async (req, res) => {
 	const query = req.query;
-	const timeSort = query.timeSort == 'asc'   ? 'createdAt' : '-createdAt';
+	const timeSort = query.timeSort == 'asc' ? 'createdAt' : '-createdAt';
 	// function timeSort() {
 	// 	const sort = req.query.timeSort;
 	// 	if (sort === 'asc') {
