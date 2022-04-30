@@ -14,7 +14,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/api/posts",
+					"raw": "https://warm-sea-66745.herokuapp.com/api/posts?timeSort=desc&q=安",
 					"protocol": "https",
 					"host": [
 						"warm-sea-66745",
@@ -24,6 +24,16 @@
 					"path": [
 						"api",
 						"posts"
+					],
+					"query": [
+						{
+							"key": "timeSort",
+							"value": "desc"
+						},
+						{
+							"key": "q",
+							"value": "安"
+						}
 					]
 				}
 			},
@@ -36,7 +46,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"宥\",\r\n    \"content\": \"我不想上班\",\r\n    \"type\": \"person\",\r\n    \"tags\": \"幹話\",\r\n    \"image\": \"http://dummyimage.com/214x100.png/cc0000/ffffff\"\r\n}",
+					"raw": "{\r\n    \"user\": \"626cfa4aa204668d46f82d49\",\r\n    \"content\": \"天氣不錯\",\r\n    \"image\": \"http://dummyimage.com/214x100.png/cc0000/ffffff\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -93,7 +103,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/api/posts/626374a0f602cbff4e6791db",
+					"raw": "https://warm-sea-66745.herokuapp.com/api/posts/626d51317f71a50bc7d3b48f",
 					"protocol": "https",
 					"host": [
 						"warm-sea-66745",
@@ -103,7 +113,7 @@
 					"path": [
 						"api",
 						"posts",
-						"626374a0f602cbff4e6791db"
+						"626d51317f71a50bc7d3b48f"
 					]
 				}
 			},
@@ -116,7 +126,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"content\": \"今天要完成第三周作業\"\r\n}",
+					"raw": "{\r\n    \"content\": \"今天要完周作業\",\r\n    \"image\": \"http:/mmyimagom/210/\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -124,7 +134,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/api/posts/626374c1f602cbff4e6791e0",
+					"raw": "https://warm-sea-66745.herokuapp.com/api/posts/626d50267f71a50bc7d3b46d",
 					"protocol": "https",
 					"host": [
 						"warm-sea-66745",
@@ -134,7 +144,7 @@
 					"path": [
 						"api",
 						"posts",
-						"626374c1f602cbff4e6791e0"
+						"626d50267f71a50bc7d3b46d"
 					]
 				}
 			},
