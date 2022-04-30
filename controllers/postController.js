@@ -1,11 +1,29 @@
 // models
 const Post = require('../models/postModel');
+const User = require('../models/userModel');
 
 // base
 const { successHandle, errorHandle } = require('../base/responseHandle');
 
 exports.getPosts = async (req, res) => {
-	const posts = await Post.find();
+	const query = req.query;
+	const timeSort = query.timeSort == 'asc'   ? 'createdAt' : '-createdAt';
+	// function timeSort() {
+	// 	const sort = req.query.timeSort;
+	// 	if (sort === 'asc') {
+	// 		return 'createdAt';
+	// 	} else if (sort === 'desc') {
+	// 		return '-createdAt';
+	// 	}
+	// }
+
+	const q = query.q !== undefined ? { content: new RegExp(query.q) } : {};
+	const posts = await Post.find(q)
+		.populate({
+			path: 'user',
+			select: 'name photo'
+		})
+		.sort(timeSort);
 	const result = `目前貼文總共有 ${posts.length} 筆`;
 	successHandle(res, posts, result);
 };
@@ -14,11 +32,11 @@ exports.createPost = async (req, res) => {
 	try {
 		const post = req.body;
 		// const [ name, content, type, tags, image ] = Object.values(post);
-		const { name, content, type, tags, image } = post;
-		const addPost = await Post.create({
-			...post
-		});
-		if (image && tags) {
+		const { user, content, image } = post;
+		if (content) {
+			const addPost = await Post.create({
+				...post
+			});
 			successHandle(res, addPost);
 		} else {
 			errorHandle(res);
@@ -52,16 +70,24 @@ exports.updatePost = async (req, res) => {
 		const id = req.params.id;
 		const post = req.body;
 		// const [ content, type, tags, image ] = Object.values(post);
-		const { content, type, tags, image } = post;
-		const editPost = await Post.findByIdAndUpdate(
-			id,
-			{ ...post },
-			{
-				new: true
+		const { content, image } = post;
+
+		if (content && image) {
+			const editPost = await Post.findByIdAndUpdate(
+				id,
+				{ ...post },
+				{
+					new: true
+				}
+			).populate({
+				path: 'user',
+				select: 'name photo'
+			});
+			if (editPost !== null) {
+				successHandle(res, editPost);
+			} else {
+				errorHandle(res);
 			}
-		);
-		if (content && type && tags && image && editPost !== null) {
-			successHandle(res, editPost);
 		} else {
 			errorHandle(res);
 		}
