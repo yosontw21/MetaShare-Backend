@@ -4,11 +4,11 @@ const userScheam = new mongoose.Schema(
 	{
 		user: {
 			type: String,
-			required: [ true, '姓名未填寫' ]
+			required: [true, '姓名未填寫']
 		},
 		email: {
 			type: String,
-			required: [ true, 'Email 未填寫' ],
+			required: [true, 'Email 未填寫'],
 			unique: true,
 			lowercase: true,
 			select: false

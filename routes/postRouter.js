@@ -5,11 +5,13 @@ const postController = require('../controllers/postController');
 
 postRouter
 	.route('/')
-	.get(postController.getPosts)
+	.get(postController.getAllPosts)
 	.post(postController.createPost)
-	.delete(postController.delAllPosts);
+	.delete(postController.delAllPosts)
+
 postRouter
 	.route('/:id')
+	.get(postController.getPost)
 	.delete(postController.delPost)
 	.patch(postController.updatePost);
 

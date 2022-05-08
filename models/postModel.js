@@ -5,11 +5,11 @@ const postScheam = new mongoose.Schema(
 		user: {
 			type: mongoose.Schema.ObjectId,
 			ref: 'user',
-			required: [ true, '貼文姓名未填寫' ]
+			required: [true, '無法找到使用者，請重新確認']
 		},
 		content: {
 			type: String,
-			required: [ true, 'Content 未填寫' ]
+			required: [true, '內容 未填寫']
 		},
 		createdAt: {
 			type: Date,
@@ -27,6 +27,7 @@ const postScheam = new mongoose.Schema(
 			type: Number,
 			default: 0
 		}
+
 		// tags: [
 		// 	{
 		// 		type: String,

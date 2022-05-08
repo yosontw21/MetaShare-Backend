@@ -1,6 +1,17 @@
 const mongoose = require('mongoose');
 const app = require('./app');
 
+
+// 程式出現重大錯誤時
+process.on('uncaughtException', (err) => {
+	// 把錯誤記錄起來，處理完之後，關閉 process
+	console.error('Uncaughted Exception，未捕捉到的異常');
+	console.error(error)
+	console.error('錯誤名稱:', err.name);
+	console.error('錯誤訊息:', err.message);
+	process.exit(1);
+});
+
 const dotenv = require('dotenv');
 dotenv.config({
 	path: './config.env'
@@ -21,18 +32,9 @@ app.listen(port, () => {
 	console.log('running Local Server...');
 });
 
-// Error 錯誤回傳訊息
-app.use((req, res, next) => {
-	res.status(404).json({
-		status: 'ERROR',
-		message: '找不到網頁 404 Not Found，請重新確認'
-	});
+process.on('unhandledRejection', (err, promise) => {
+	console.error('Unhandled Rejection, 未處理的拒絕');
+	console.error('錯誤名稱:', err.name);
+	console.error('錯誤訊息:', err.message);
 });
 
-app.use((err, req, res, next) => {
-	const errorMsg = err.message;
-	res.status(500).json({
-		status: 'ERROR',
-		message: errorMsg
-	});
-});
