@@ -1,12 +1,12 @@
 {
 	"info": {
 		"_postman_id": "9ecd16d2-759f-4da8-98fc-769321b87de9",
-		"name": "第二週：Node.js NPM 整合 MongoDB",
+		"name": "Node.js - Posts",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "取得貼文",
+			"name": "取得所有貼文",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
 			},
@@ -14,26 +14,32 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/api/posts?timeSort=desc&q=安",
-					"protocol": "https",
+					"raw": "{{herokuURL}}/api/posts",
 					"host": [
-						"warm-sea-66745",
-						"herokuapp",
-						"com"
+						"{{herokuURL}}"
 					],
 					"path": [
 						"api",
 						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "取得單筆貼文",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{herokuURL}}/api/posts/6278060df6ab41b4857adb64",
+					"host": [
+						"{{herokuURL}}"
 					],
-					"query": [
-						{
-							"key": "timeSort",
-							"value": "desc"
-						},
-						{
-							"key": "q",
-							"value": "安"
-						}
+					"path": [
+						"api",
+						"posts",
+						"6278060df6ab41b4857adb64"
 					]
 				}
 			},
@@ -46,7 +52,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"user\": \"626cfa4aa204668d46f82d49\",\r\n    \"content\": \"天氣不錯\",\r\n    \"image\": \"http://dummyimage.com/214x100.png/cc0000/ffffff\"\r\n}",
+					"raw": "{\r\n    \"user\": \"626cfa4aa204668d46f82d49\",\r\n    \"content\": \"要做作業\",\r\n    \"image\": \"http://dummyimage.com/214x100.png/cc0000/ffffff\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -54,12 +60,9 @@
 					}
 				},
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/api/posts",
-					"protocol": "https",
+					"raw": "{{herokuURL}}/api/posts",
 					"host": [
-						"warm-sea-66745",
-						"herokuapp",
-						"com"
+						"{{herokuURL}}"
 					],
 					"path": [
 						"api",
@@ -75,12 +78,9 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/api/posts",
-					"protocol": "https",
+					"raw": "{{herokuURL}}/api/posts",
 					"host": [
-						"warm-sea-66745",
-						"herokuapp",
-						"com"
+						"{{herokuURL}}"
 					],
 					"path": [
 						"api",
@@ -103,17 +103,14 @@
 					}
 				},
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/api/posts/626d51317f71a50bc7d3b48f",
-					"protocol": "https",
+					"raw": "{{herokuURL}}/api/posts/62780a8dd2a3632b03071186",
 					"host": [
-						"warm-sea-66745",
-						"herokuapp",
-						"com"
+						"{{herokuURL}}"
 					],
 					"path": [
 						"api",
 						"posts",
-						"626d51317f71a50bc7d3b48f"
+						"62780a8dd2a3632b03071186"
 					]
 				}
 			},
@@ -126,7 +123,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"content\": \"今天要完周作業\",\r\n    \"image\": \"http:/mmyimagom/210/\"\r\n}",
+					"raw": "{\r\n    \"content\": \"要完成作業\",\r\n    \"image\": \"http:/mmyimagom/210/\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -134,17 +131,14 @@
 					}
 				},
 				"url": {
-					"raw": "https://warm-sea-66745.herokuapp.com/api/posts/626d50267f71a50bc7d3b46d",
-					"protocol": "https",
+					"raw": "{{herokuURL}}/api/posts/62780a8dd2a3632b03071186",
 					"host": [
-						"warm-sea-66745",
-						"herokuapp",
-						"com"
+						"{{herokuURL}}"
 					],
 					"path": [
 						"api",
 						"posts",
-						"626d50267f71a50bc7d3b46d"
+						"62780a8dd2a3632b03071186"
 					]
 				}
 			},
