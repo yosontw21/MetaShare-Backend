@@ -2,7 +2,7 @@
 const resErrorProd = (err, res) => {
 	if (err.isOperational) {
 		res.status(err.statusCode).json({
-			status: 'Error',
+			status: err.status,
 			message: err.message
 		});
 	} else {
@@ -36,9 +36,27 @@ const handleCastError = (err) => {
 	err.isOperational = true;
 };
 
+const handleConfirmEmail = (err) => {
+	err.message = `Email 已有人使用，請重新註冊`;
+	err.isOperational = true;
+};
+
+const handleSyntaxError = (err) => {
+	err.statusCode = 400;
+	err.message = `資料格式錯誤，請重新確認`;
+	err.isOperational = true;
+};
+
+const handleJWTError = (err) => {
+	err.statusCode = 401;
+	err.message = `無效的 Token，請重新確認`;
+	err.isOperational = true;
+};
+
 // 錯誤處理
 const handleError = (err, req, res, next) => {
 	err.statusCode = err.statusCode || 500;
+	err.status = err.status || 'Error';
 	// dev
 	if (process.env.NODE_ENV === 'dev') {
 		return resErrorDev(err, res);
@@ -51,6 +69,21 @@ const handleError = (err, req, res, next) => {
 		}
 		if (err.name === 'CastError') {
 			handleCastError(err);
+			return resErrorProd(err, res);
+		}
+
+		if (err.code === 11000) {
+			handleConfirmEmail(err);
+			return resErrorProd(err, res);
+		}
+
+		if (err.name === 'SyntaxError') {
+			handleSyntaxError(err);
+			return resErrorProd(err, res);
+		}
+
+		if (err.name === 'JsonWebTokenError') {
+			handleJWTError(err);
 			return resErrorProd(err, res);
 		}
 

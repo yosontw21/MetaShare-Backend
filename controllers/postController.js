@@ -33,18 +33,9 @@ exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 			 },
 	 	 }
 	 */
-	const query = req.query;
+	let query = req.query;
 	const timeSort = query.timeSort == 'asc' ? 'createdAt' : '-createdAt';
 	const limitPost = query.limit;
-
-	// function timeSort() {
-	// 	const sort = req.query.timeSort;
-	// 	if (sort === 'asc') {
-	// 		return 'createdAt';
-	// 	} else if (sort === 'desc') {
-	// 		return '-createdAt';
-	// 	}
-	// }
 
 	const search = query.q !== undefined ? { content: new RegExp(query.q) } : {};
 	const posts = await Post.find(search)
@@ -55,11 +46,11 @@ exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 		.sort(timeSort)
 		.limit(limitPost);
 	const result = `目前貼文總共有 ${posts.length} 筆`;
-	successHandle(res, posts, result);
+	successHandle(posts, 200, res, result);
 });
 
 exports.getPost = catchErrorAsync(async (req, res, next) => {
-	const id = req.params.id;
+	let id = req.params.id;
 
 	const post = await Post.findById(id).populate({
 		path: 'user',
@@ -70,7 +61,7 @@ exports.getPost = catchErrorAsync(async (req, res, next) => {
 		return appError(400, '找不到貼文資料，或是 id 不正確', next);
 	}
 
-	successHandle(res, post);
+	successHandle(post, 200, res);
 });
 
 exports.createPost = catchErrorAsync(async (req, res, next) => {
@@ -89,13 +80,14 @@ exports.createPost = catchErrorAsync(async (req, res, next) => {
 	 }
 	 */
 
-	const post = req.body;
-	const { user, content, image } = post;
-	const userId = await User.findById(user).exec();
+	let post = req.body;
+	let id = req.user.id;
+	let { content, image } = post;
+	const userId = await User.findById(id).exec();
 	if (!content || content == '') {
 		return appError(400, '內容 未填寫', next);
 	}
-	if (!user) {
+	if (!id) {
 		return appError(400, '使用者 格式錯誤', next);
 	}
 	if (userId === null) {
@@ -105,20 +97,22 @@ exports.createPost = catchErrorAsync(async (req, res, next) => {
 		return appError(400, '圖片 格式錯誤', next);
 	}
 	const addPost = await Post.create({
-		...post
+		user: req.user.id,
+		content,
+		image
 	});
-	successHandle(res, addPost);
+	successHandle(addPost, 201, res);
 });
 
 exports.delAllPosts = catchErrorAsync(async (req, res, next) => {
 	/**
 	 * #swagger.tags = ['Posts - 貼文']
 	 */
-	if (req.originalUrl === '/posts/') {
+	if (req.originalUrl === '/api/posts/') {
 		return appError(404, '無此網站路由', next);
 	}
 	await Post.deleteMany({});
-	successHandle(res, []);
+	successHandle([], 200, res);
 });
 
 exports.delPost = catchErrorAsync(async (req, res, next) => {
@@ -130,12 +124,25 @@ exports.delPost = catchErrorAsync(async (req, res, next) => {
 	 }]
 	 */
 
-	const id = req.params.id;
-	const delSingle = await Post.findByIdAndDelete(id);
+	let postId = req.params.id;
+	let userId = req.user.id;
+
+	const post = await Post.findById(postId).populate({
+		path: 'user',
+		select: 'name photo'
+	});
+
+	if (post.user.id !== userId) {
+		return appError(400, '你無法刪除無他使用者貼文', next);
+	}
+
+	const delSingle = await Post.findByIdAndDelete(postId);
+	
 	if (!delSingle) {
 		return appError(400, '找不到 id，請重新確認', next);
 	}
-	successHandle(res, delSingle);
+
+	successHandle(delSingle, 200, res);
 });
 
 exports.updatePost = catchErrorAsync(async (req, res, next) => {
@@ -143,9 +150,11 @@ exports.updatePost = catchErrorAsync(async (req, res, next) => {
 	 * #swagger.tags = ['Posts - 貼文']
 	 */
 
-	const id = req.params.id;
-	const post = req.body;
-	const { content, image } = post;
+	let postId = req.params.id;
+	let userId = req.user.id;
+	let post = req.body;
+
+	let { content, image } = post;
 
 	if (!content || content == '') {
 		return appError(400, 'Content 未填寫', next);
@@ -155,7 +164,7 @@ exports.updatePost = catchErrorAsync(async (req, res, next) => {
 	}
 
 	const editPost = await Post.findByIdAndUpdate(
-		id,
+		postId,
 		{ ...post },
 		{
 			new: true
@@ -164,9 +173,14 @@ exports.updatePost = catchErrorAsync(async (req, res, next) => {
 		path: 'user',
 		select: 'name photo'
 	});
+	console.log(userId);
 
 	if (!editPost) {
 		return appError(400, '找不到 id，請重新確認', next);
 	}
-	successHandle(res, editPost);
+
+	if (editPost.user.id !== userId) {
+		return appError(400, '你無法編輯無他使用者貼文', next);
+	}
+	successHandle(editPost, 200, res);
 });

@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 
 const userScheam = new mongoose.Schema(
 	{
-		user: {
+		name: {
 			type: String,
-			required: [true, '姓名未填寫']
+			required: [true, '姓名 未填寫']
 		},
 		email: {
 			type: String,
@@ -13,9 +13,33 @@ const userScheam = new mongoose.Schema(
 			lowercase: true,
 			select: false
 		},
+		gender: {
+			type: String,
+			enum: ['male', 'female']
+		},
 		photo: {
 			type: String,
 			default: ''
+		},
+		role: {
+			type: String,
+			enum: ['user', 'admin'],
+			default: 'user'
+		},
+		password: {
+			type: String,
+			required: [true, '密碼 未填寫'],
+			minlength: 8,
+			select: false
+		},
+		passwordConfirm: {
+			type: String,
+			select: false
+		},
+		createdAt: {
+			type: Date,
+			default: Date.now,
+			select: false
 		}
 	},
 	{

@@ -5,7 +5,7 @@ const postScheam = new mongoose.Schema(
 		user: {
 			type: mongoose.Schema.ObjectId,
 			ref: 'user',
-			required: [true, '無法找到使用者，請重新確認']
+			required: [true, '無法找到使用者']
 		},
 		content: {
 			type: String,

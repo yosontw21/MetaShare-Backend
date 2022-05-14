@@ -1,5 +1,5 @@
-const successHandle = (res, data, result) => {
-	res.status(200).json({
+const successHandle = (data, statusCode, res, result) => {
+	res.status(statusCode).json({
 		status: 'success',
 		result,
 		data

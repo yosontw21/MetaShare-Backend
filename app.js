@@ -13,8 +13,10 @@ app.use(cors());
 
 // Routers
 const postRouter = require('./routes/postRouter');
+const userRouter = require('./routes/userRouter');
 
-app.use('/api/posts', postRouter);
+app.use('/api', postRouter);
+app.use('/api/users', userRouter)
 app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerFile))
 
 // Error 錯誤回傳訊息

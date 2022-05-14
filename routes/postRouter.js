@@ -1,18 +1,25 @@
 const express = require('express');
 const postRouter = express.Router();
-
+const authController = require('../controllers/authController');
 const postController = require('../controllers/postController');
 
 postRouter
-	.route('/')
-	.get(postController.getAllPosts)
-	.post(postController.createPost)
-	.delete(postController.delAllPosts)
+	.route('/posts')
+	.get(authController.isAuth, postController.getAllPosts)
+	.delete(
+		authController.isAuth,
+		authController.isAdmin,
+		postController.delAllPosts
+	);
 
 postRouter
-	.route('/:id')
-	.get(postController.getPost)
-	.delete(postController.delPost)
-	.patch(postController.updatePost);
+	.route('/post')
+	.post(authController.isAuth, postController.createPost);
+
+postRouter
+	.route('/post/:id')
+	.get(authController.isAuth, postController.getPost)
+	.delete(authController.isAuth, postController.delPost)
+	.patch(authController.isAuth, postController.updatePost);
 
 module.exports = postRouter;
