@@ -10,6 +10,7 @@
     "mongoose": "^6.2.10",
     "morgan": "^1.10.0",
     "node-fetch": "^3.2.3",
+    "nodemailer": "^6.7.5",
     "swagger-autogen": "^2.5.10",
     "swagger-ui-express": "^4.3.0",
     "validator": "^13.7.0"

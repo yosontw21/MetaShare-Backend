@@ -4,7 +4,6 @@ const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 
 userRouter.route('/signup').post(authController.signup);
-
 userRouter.route('/login').post(authController.login);
 
 userRouter
