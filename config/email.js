@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
 	const transporter = nodemailer.createTransport({
+		service: 'SendGrid',
 		host: process.env.EMAIL_HOST,
 		port: process.env.MAIL_PORT,
 		auth: {
@@ -11,7 +12,7 @@ const sendEmail = async (options) => {
 	});
 
 	const mailOptions = {
-		from: 'MetaWall 社交圈<metaWall@metawall.com>',
+		from: 'MetaWall 社交圈<yosontw21@gmail.com>',
 		to: options.email,
 		subject: options.subject,
 		text: options.message,

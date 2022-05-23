@@ -1,8 +1,9 @@
 {
 	"info": {
 		"_postman_id": "9ecd16d2-759f-4da8-98fc-769321b87de9",
-		"name": "Node.js - Posts",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"name": "MetaWall",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12031218"
 	},
 	"item": [
 		{
@@ -27,9 +28,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{herokuURL}}/api/posts",
+							"raw": "{{URL}}/api/posts",
 							"host": [
-								"{{herokuURL}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
@@ -287,6 +288,44 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "上傳圖片",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "",
+									"type": "file",
+									"src": "/C:/Users/Yoson/Downloads/240721093_2082147298628559_6252632102014376388_n.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/api/upload",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"upload"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -312,7 +351,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"宥11\",\r\n    \"gender\": \"male\",\r\n    \"email\": \"yonsotw21@gmail.com\",\r\n    \"password\": \"12344321\",\r\n    \"passwordConfirm\": \"12344321\"\r\n}",
+							"raw": "{\r\n    \"name\": \"宥11\",\r\n    \"gender\": \"male\",\r\n    \"email\": \"xun830321111111d1@gmail.com\",\r\n    \"password\": \"12344321a\",\r\n    \"passwordConfirm\": \"12344321a\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -355,7 +394,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"yonsotw21@gmail.com\",\r\n    \"password\": \"12344321\"\r\n}",
+							"raw": "{\r\n    \"email\": \"yosontw21@gmail.com\",\r\n    \"password\": \"12344321\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -393,7 +432,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"yonsotw21@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"email\": \"xun830321@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -447,6 +486,45 @@
 								"api",
 								"users",
 								"updatePassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "重置密碼",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"12345678\",\r\n    \"passwordConfirm\": \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/users/resetPassword/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODBiY2ZhZTU2NGJhYWFlODdjMTIyZiIsImlhdCI6MTY1Mjc5MDQ1OCwiZXhwIjoxNjU1MzgyNDU4fQ.vnxHSjc121MLo_MRHvKPFwGpCa5ME0R6ZMCRNsZbO6w",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"resetPassword",
+								"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODBiY2ZhZTU2NGJhYWFlODdjMTIyZiIsImlhdCI6MTY1Mjc5MDQ1OCwiZXhwIjoxNjU1MzgyNDU4fQ.vnxHSjc121MLo_MRHvKPFwGpCa5ME0R6ZMCRNsZbO6w"
 							]
 						}
 					},
