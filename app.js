@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const handleError = require('./config/handleError');
 const swaggerUI = require('swagger-ui-express');
-const swaggerFile = require('./swagger/swagger-output.json')
+const swaggerFile = require('./swagger/swagger-output.json');
 
 const morgan = require('morgan');
 const cors = require('cors');
@@ -14,14 +14,15 @@ app.use(cors());
 // Routers
 const postRouter = require('./routes/postRouter');
 const userRouter = require('./routes/userRouter');
+const uploadRouter = require('./routes/uploadRouter');
 
 app.use('/api', postRouter);
-app.use('/api/users', userRouter)
-app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerFile))
+app.use('/api/users', userRouter);
+app.use('/api/upload', uploadRouter);
+app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerFile));
 
 // Error 錯誤回傳訊息
 app.use((req, res, next) => {
-
 	res.status(404).json({
 		status: 'Error',
 		message: '找不到網頁 404 Not Found，請重新確認'
@@ -29,6 +30,6 @@ app.use((req, res, next) => {
 });
 
 // Error 錯誤回傳訊息
-app.use(handleError)
+app.use(handleError);
 
 module.exports = app;
