@@ -1,7 +1,20 @@
 const catchErrorAsync = require('../config/catchErrorAsync');
 const User = require('../models/userModel');
+const Post = require('../models/postModel');
 const successHandle = require('../config/handleResponse');
 const appError = require('../config/appError');
+
+exports.getPosts = catchErrorAsync(async (req, res, next) => {
+	const user = req.params.id;
+	const posts = await Post.find({ user }).exec();
+
+	if (!posts) {
+		return appError(400, '找不到使用者資訊', next);
+	}
+
+	const result = `目前貼文總共有 ${posts.length} 筆`;
+	successHandle(posts, 200, res, result);
+});
 
 exports.getProfile = catchErrorAsync(async (req, res, next) => {
 	let id = req.user.id;

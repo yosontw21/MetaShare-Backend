@@ -4,8 +4,10 @@ const User = require('../models/userModel');
 const sendEmail = require('../config/email');
 const successHandle = require('../config/handleResponse');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
+const { token } = require('morgan');
 
 const generateSendJWT = (user, statusCode, res) => {
 	let id = user._id;
@@ -168,12 +170,12 @@ exports.forgotPassword = catchErrorAsync(async (req, res, next) => {
 	if (!user) {
 		return appError(400, '沒有此 email 帳號', next);
 	}
-	const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-		expiresIn: process.env.JWT_EXPIRES_DAY
-	});
+
+	const resetToken = user.createResetToken();
+
 	const resetURL = `${req.protocol}://${req.get(
 		'host'
-	)}/api/users/resetPassword/${token}`;
+	)}/api/users/resetPassword/${resetToken}`;
 
 	await user.save();
 
@@ -195,31 +197,29 @@ exports.forgotPassword = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.resetPassword = catchErrorAsync(async (req, res, next) => {
-	// let userBody = req.body;
-	// let token = req.params.token;
-	// let { password, passwordConfirm } = userBody;
-	// const user = await User.findOne({ token }).select('+password');
-	// console.log(user.name);
-	// const decoded = await new Promise((resolve, reject) => {
-	// 	jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
-	// 		if (err) {
-	// 			reject(err);
-	// 		} else {
-	// 			resolve(payload);
-	// 		}
-	// 	});
-	// });
-	// const currentUser = await User.findById(decoded.id);
+	let userBody = req.body;
+	let { password, passwordConfirm } = userBody;
+	const resetToken = crypto
+		.createHash('sha256')
+		.update(req.params.token)
+		.digest('hex');
 
-	// req.user = currentUser;
+	const user = await User.findOne({
+		passwordResetToken: resetToken
+	});
 
-	// userBody.password = await bcrypt.hash(password, 12);
+	if (!user) {
+		return appError(400, '無效的連結', next);
+	}
 
-	// user.password = userBody.password;
-	// user.passwordConfirm = userBody.passwordConfirm;
-	// user.passwordConfirm = undefined;
+	userBody.password = await bcrypt.hash(password, 12);
 
-	// await user.save();
+	user.password = userBody.password;
+	user.passwordConfirm = userBody.passwordConfirm;
+	user.passwordResetToken = undefined;
+	user.passwordConfirm = undefined;
 
-	// successHandle(token, 200, res);
+	await user.save();
+
+	generateSendJWT(user, 200, res);
 });

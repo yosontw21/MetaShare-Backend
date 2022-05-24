@@ -22,4 +22,9 @@ postRouter
 	.delete(authController.isAuth, postController.delPost)
 	.patch(authController.isAuth, postController.updatePost);
 
+postRouter
+	.route('/post/:id/likes')
+	.post(authController.isAuth, postController.likesPost)
+	.delete(authController.isAuth, postController.delLikesPost);
+
 module.exports = postRouter;

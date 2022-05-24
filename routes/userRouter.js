@@ -3,26 +3,21 @@ const userRouter = express.Router();
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 
-userRouter.route('/signup').post(authController.signup);
-userRouter.route('/login').post(authController.login);
+userRouter.post('/signup', authController.signup);
+userRouter.post('/login', authController.login);
+userRouter.post('/forgotPassword', authController.forgotPassword);
+userRouter.patch('/resetPassword/:token', authController.resetPassword);
+userRouter.patch(
+	'/updatePassword',
+	authController.isAuth,
+	authController.updatePassword
+);
 
 userRouter
-	.route('/forgotPassword')
-	.post(authController.isAuth, authController.forgotPassword);
-userRouter
-	.route('/resetPassword/:token')
-	.patch(authController.isAuth, authController.resetPassword);
-
-userRouter
-	.route('/updatePassword')
-	.patch(authController.isAuth, authController.updatePassword);
-
-userRouter
-	.route('/profile/updateProfile')
-	.patch(authController.isAuth, userController.updateProfile);
-
-userRouter
-	.route('/profile/getProfile')
+	.route('/profile')
+	.patch(authController.isAuth, userController.updateProfile)
 	.get(authController.isAuth, userController.getProfile);
+
+userRouter.route('/:id').get(authController.isAuth, userController.getPosts);
 
 module.exports = userRouter;

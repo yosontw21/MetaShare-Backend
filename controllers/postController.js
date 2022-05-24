@@ -46,6 +46,11 @@ exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 		.sort(timeSort)
 		.limit(limitPost);
 	const result = `目前貼文總共有 ${posts.length} 筆`;
+	posts.forEach((item) => {
+		likesQun = item.likes.length;
+		console.log(likesQun);
+	});
+
 	successHandle(posts, 200, res, result);
 });
 
@@ -137,7 +142,7 @@ exports.delPost = catchErrorAsync(async (req, res, next) => {
 	}
 
 	const delSingle = await Post.findByIdAndDelete(postId);
-	
+
 	if (!delSingle) {
 		return appError(400, '找不到 id，請重新確認', next);
 	}
@@ -183,4 +188,37 @@ exports.updatePost = catchErrorAsync(async (req, res, next) => {
 		return appError(400, '你無法編輯無他使用者貼文', next);
 	}
 	successHandle(editPost, 200, res);
+});
+
+exports.likesPost = catchErrorAsync(async (req, res, next) => {
+	const _id = req.params.id;
+	const userID = req.user.id;
+	await Post.findByIdAndUpdate(
+		{ _id },
+		{
+			$addToSet: { likes: userID }
+		}
+	);
+	res.status(201).json({
+		status: 'success',
+		postId: _id,
+		userID
+	});
+	// successHandle(likePost, 201, res);
+});
+
+exports.delLikesPost = catchErrorAsync(async (req, res, next) => {
+	const _id = req.params.id;
+	const userID = req.user.id;
+	await Post.findByIdAndUpdate(
+		{ _id },
+		{
+			$pull: { likes: userID }
+		}
+	);
+	res.status(201).json({
+		status: 'success',
+		postId: _id,
+		userID
+	});
 });
