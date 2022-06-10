@@ -67,7 +67,7 @@ exports.isAuth = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.isAdmin = catchErrorAsync(async (req, res, next) => {
-	let userRole = req.user.role;
+	const userRole = req.user.role;
 	if (userRole === 'admin') {
 		next();
 	} else {
@@ -76,8 +76,7 @@ exports.isAdmin = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.signup = catchErrorAsync(async (req, res, next) => {
-	let userBody = req.body;
-	let { name, gender, email, password, passwordConfirm } = userBody;
+	const { name, gender, email, password, passwordConfirm } =req.body;
 	if (!name || !email || !password || !passwordConfirm) {
 		return appError(400, '欄位未填寫正確', next);
 	}
@@ -87,13 +86,12 @@ exports.signup = catchErrorAsync(async (req, res, next) => {
 		gender,
 		email,
 		password,
-		passwordConfirm
 	});
 
 	const html = `
 	<h2>恭喜您，註冊成功</h2>
-	<p>親愛的用戶您好， ${name} 歡迎來到 MetaWall 社交圈</p>
-	<p>很高興您加入我們，歡迎使用我們的服務</p>`;
+	<p>親愛的用戶您好， ${name} 歡迎來到 MetaWall 社交圈。</p>
+	<p>很高興您加入我們，歡迎使用我們的服務。</p>`;
 
 	await sendEmail({
 		email,
@@ -105,8 +103,7 @@ exports.signup = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.login = catchErrorAsync(async (req, res, next) => {
-	let userBody = req.body;
-	let { email, password } = userBody;
+	const { email, password } = req.body;
 	if (!email || !password) {
 		return appError(400, '帳號密碼不可為空', next);
 	}
@@ -120,8 +117,8 @@ exports.login = catchErrorAsync(async (req, res, next) => {
 
 exports.updatePassword = catchErrorAsync(async (req, res, next) => {
 	let userBody = req.body;
-	let id = req.user.id;
-	let { passwordCurrent, password, passwordConfirm } = userBody;
+	const id = req.user.id;
+	const { passwordCurrent, password, passwordConfirm } = userBody;
 
 	const user = await User.findById(id).select('+password');
 	const auth = await bcrypt.compare(passwordCurrent, user.password);
@@ -138,9 +135,9 @@ exports.updatePassword = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.forgotPassword = catchErrorAsync(async (req, res, next) => {
-	let email = req.body.email;
+	const email = req.body.email;
 
-	let user = await User.findOne({ email });
+	const user = await User.findOne({ email });
 	if (!user) {
 		return appError(400, '沒有此 email 帳號', next);
 	}
@@ -172,7 +169,7 @@ exports.forgotPassword = catchErrorAsync(async (req, res, next) => {
 
 exports.resetPassword = catchErrorAsync(async (req, res, next) => {
 	let userBody = req.body;
-	let { password, passwordConfirm } = userBody;
+	const { password, passwordConfirm } = userBody;
 	const resetToken = crypto
 		.createHash('sha256')
 		.update(req.params.token)
