@@ -17,7 +17,8 @@ passport.use(
 		{
 			clientID: process.env.GOOGLE_CLIENT_ID,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-			callbackURL: 'https://warm-sea-66745.herokuapp.com/api/auth/google/callback',
+			callbackURL:
+				'https://warm-sea-66745.herokuapp.com/api/auth/google/callback'
 		},
 		async (accessToken, refreshToken, profile, cb) => {
 			console.log(profile);
@@ -34,6 +35,17 @@ passport.use(
 				name: profile.displayName,
 				password,
 				googleId: profile.id
+			});
+
+			const html = `
+	      <h2>恭喜您，註冊成功</h2>
+      	<p>親愛的用戶您好， ${name} 歡迎來到 MetaWall 社交圈</p>
+	      <p>很高興您加入我們，歡迎使用我們的服務</p>`;
+
+			await sendEmail({
+				email,
+				subject: '註冊成功通知',
+				html
 			});
 
 			return cb(null, newUser);
