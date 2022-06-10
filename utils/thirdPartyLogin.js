@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
+const sendEmail = require('../utils/email');
 const { generateUrlJWT } = require('../controllers/authController');
 
 const passport = require('passport');

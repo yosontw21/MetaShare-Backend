@@ -6,7 +6,6 @@ const successHandle = require('../utils/handleResponse');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const passport = require('passport');
 
 const generateSendJWT = (user, statusCode, res) => {
 	let id = user._id;
