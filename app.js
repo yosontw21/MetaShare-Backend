@@ -25,9 +25,14 @@ const postRouter = require('./routes/postRouter');
 const userRouter = require('./routes/userRouter');
 const uploadRouter = require('./routes/uploadRouter');
 
+// utils
+const thirdPartyRouter =  require('./utils/thirdPartyLogin')
+
 app.use('/api', postRouter);
 app.use('/api/users', userRouter);
 app.use('/api/upload', uploadRouter);
+app.use('/api/auth',thirdPartyRouter)
+
 app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerFile));
 
 // Error 錯誤回傳訊息

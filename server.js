@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 const app = require('./app');
 
+const dotenv = require('dotenv');
+dotenv.config({
+	path: './config.env'
+});
+
+
 // 程式出現重大錯誤時
 process.on('uncaughtException', (err) => {
 	// 把錯誤記錄起來，處理完之後，關閉 process
@@ -11,10 +17,6 @@ process.on('uncaughtException', (err) => {
 	process.exit(1);
 });
 
-const dotenv = require('dotenv');
-dotenv.config({
-	path: './config.env'
-});
 
 const DB = process.env.DATABASE.replace(
 	'<password>',
@@ -25,8 +27,6 @@ mongoose
 	.connect(DB)
 	.then(() => console.log('connected to the Database...'))
 	.catch((err) => console.log(err));
-
-require('./utils/passport');
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

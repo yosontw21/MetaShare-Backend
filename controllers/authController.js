@@ -31,13 +31,13 @@ exports.generateUrlJWT = (user, res) => {
 	const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
 		expiresIn: process.env.JWT_EXPIRES_DAY
 	});
-	res.redirect(`/api/user/profile}`);
+	// res.redirect(302, `/callback?token=${token}$name=${user.name}`);
 
-	// res.send({
-	// 	status: 'success',
-	// 	token,
-	// 	name: user.name
-	// });
+	res.send({
+		status: 'success',
+		token,
+		name: user.name
+	});
 };
 
 exports.isAuth = catchErrorAsync(async (req, res, next) => {
@@ -195,12 +195,3 @@ exports.resetPassword = catchErrorAsync(async (req, res, next) => {
 
 	generateSendJWT(user, 200, res);
 });
-
-exports.authGoogle = passport.authenticate('google', {
-	scope: ['email', 'profile']
-});
-
-(exports.callbackGoogle = passport.authenticate('google', { session: false })),
-	(req, res) => {
-		generateUrlJWT(req.user, res);
-	};

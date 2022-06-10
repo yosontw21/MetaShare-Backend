@@ -1,8 +1,9 @@
 const express = require('express');
+const router = express.Router();
+
 const uploadController = require('../controllers/uploadController');
 const authController = require('../controllers/authController');
 const upload = require('../utils/image.js');
-const router = express.Router();
 
 router
 	.route('/')

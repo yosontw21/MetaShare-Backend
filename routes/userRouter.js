@@ -3,8 +3,6 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 
-router.get('/google', authController.authGoogle);
-router.get('/google/callback', authController.callbackGoogle);
 
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
@@ -37,11 +35,5 @@ router.get(
 	authController.isAuth,
 	userController.getFollowingList
 );
-
-// router.get(
-// 	'/getFollowersList',
-// 	authController.isAuth,
-// 	userController.getFollowersList
-// );
 
 module.exports = router;

@@ -1,21 +1,28 @@
+const express = require('express');
+const router = express.Router();
+const crypto = require('crypto');
+const { generateUrlJWT } = require('../controllers/authController');
+
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const crypto = require('crypto');
 
 const User = require('../models/userModel');
 
+const dotenv = require('dotenv');
+dotenv.config({
+	path: './config.env'
+});
 passport.use(
 	new GoogleStrategy(
 		{
 			clientID: process.env.GOOGLE_CLIENT_ID,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-			callbackURL: 'https://warm-sea-66745.herokuapp.com/api/users/google/callback'
+			callbackURL: 'http://localhost:3000/api/auth/google/callback',
 		},
 		async (accessToken, refreshToken, profile, cb) => {
-			console.log(profile)
+			console.log(profile);
 			const user = await User.findOne({ googleId: profile.id });
 			if (user) {
-				console.log('使用者已存在');
 				return cb(null, user);
 			}
 
@@ -23,11 +30,30 @@ passport.use(
 
 			const newUser = await User.create({
 				email: profile.emails[0].value,
+				photo: profile.photos[0].value,
 				name: profile.displayName,
 				password,
 				googleId: profile.id
 			});
+
 			return cb(null, newUser);
 		}
 	)
 );
+
+router.get(
+	'/google',
+	passport.authenticate('google', {
+		scope: ['email', 'profile']
+	})
+);
+
+router.get(
+	'/google/callback',
+	passport.authenticate('google', { session: false }),
+	(req, res) => {
+		generateUrlJWT(req.user, res);
+	}
+);
+
+module.exports = router;

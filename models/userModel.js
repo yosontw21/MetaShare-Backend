@@ -63,7 +63,6 @@ const userScheam = new mongoose.Schema(
 		},
 		passwordConfirm: {
 			type: String,
-			required: [true, '確認密碼 未填寫'],
 			validate: {
 				validator: function(el) {
 					return el === this.password;
