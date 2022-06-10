@@ -40,7 +40,7 @@ passport.use(
 
 			const html = `
 	      <h2>恭喜您，註冊成功</h2>
-      	<p>親愛的用戶您好， ${name} 歡迎來到 MetaWall 社交圈</p>
+      	<p>親愛的用戶您好， ${profile.displayName} 歡迎來到 MetaWall 社交圈</p>
 	      <p>很高興您加入我們，歡迎使用我們的服務</p>`;
 
 			await sendEmail({
