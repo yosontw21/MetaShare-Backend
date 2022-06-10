@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "Posts",
+			"name": "動態貼文",
 			"item": [
 				{
 					"name": "取得所有貼文",
@@ -56,14 +56,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{herokuURL}}/api/post/627fed2ccd12baf4fc631cb8",
+							"raw": "{{URL}}/api/post/62a07385856491b804d3e3fb",
 							"host": [
-								"{{herokuURL}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
 								"post",
-								"627fed2ccd12baf4fc631cb8"
+								"62a07385856491b804d3e3fb"
 							]
 						}
 					},
@@ -86,7 +86,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"content\": \"測試1\",\r\n    \"image\": \"http://dummyimage.com/214x100.png/cc0000/ffffff\"\r\n}",
+							"raw": "{\r\n    \"content\": \"今天要寫程式~~~~~\",\r\n    \"image\": \"http://dummyimage.com/214x100.png/cc0000/ffffff\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -94,9 +94,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{herokuURL}}/api/post",
+							"raw": "{{URL}}/api/post",
 							"host": [
-								"{{herokuURL}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
@@ -122,9 +122,9 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{herokuURL}}/api/posts",
+							"raw": "{{URL}}/api/posts",
 							"host": [
-								"{{herokuURL}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
@@ -157,14 +157,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{herokuURL}}/api/post/62801f3139daa9a9b9527af0",
+							"raw": "{{URL}}/api/post/629f413d6688a84d8ac3f775",
 							"host": [
-								"{{herokuURL}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
 								"post",
-								"62801f3139daa9a9b9527af0"
+								"629f413d6688a84d8ac3f775"
 							]
 						}
 					},
@@ -195,9 +195,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{herokuURL}}/api/post/62801f3139daa9a9b9527af0",
+							"raw": "{{URL}}/api/post/62801f3139daa9a9b9527af0",
 							"host": [
-								"{{herokuURL}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
@@ -207,11 +207,179 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "新增一則貼文的讚",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/post/62a07c9a19581e05aa3f1779/likes",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"post",
+								"62a07c9a19581e05aa3f1779",
+								"likes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取消一則貼文的讚",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/post/628b62ae3db2d49bf8692866/likes",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"post",
+								"628b62ae3db2d49bf8692866",
+								"likes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "新增一則貼文的留言",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"comment\": \"安安你好\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/post/{{postID}}/comments",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"post",
+								"{{postID}}",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "編輯一則貼文的留言",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"comment\": \"安安你好~~~~~1~2~~~\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/post/{{commentID}}/comments",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"post",
+								"{{commentID}}",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "刪除一則貼文的留言",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/post/{{commentID}}/comments",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"post",
+								"{{commentID}}",
+								"comments"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
-			"name": "Users",
+			"name": "會員功能",
 			"item": [
 				{
 					"name": "個人頁面",
@@ -236,7 +404,7 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "{{URL}}/api/users/profile/getProfile",
+							"raw": "{{URL}}/api/users/profile/",
 							"host": [
 								"{{URL}}"
 							],
@@ -244,7 +412,7 @@
 								"api",
 								"users",
 								"profile",
-								"getProfile"
+								""
 							]
 						}
 					},
@@ -267,7 +435,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"我是誰\",\r\n    \"photo\": \"photo\",\r\n    \"gender\": \"male\"\r\n}",
+							"raw": "{\r\n    \"name\": \"安安安\",\r\n    \"photo\": \"photo\",\r\n    \"gender\": \"male\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -275,15 +443,15 @@
 							}
 						},
 						"url": {
-							"raw": "{{herokuURL}}/api/users/profile/updateProfile",
+							"raw": "{{URL}}/api/users/profile/",
 							"host": [
-								"{{herokuURL}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
 								"users",
 								"profile",
-								"updateProfile"
+								""
 							]
 						}
 					},
@@ -326,11 +494,40 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "個人動態",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/users/628b6dd95c7f47dc274ed636",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"628b6dd95c7f47dc274ed636"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
-			"name": "Authentication",
+			"name": "會員管理驗證",
 			"item": [
 				{
 					"name": "註冊帳號",
@@ -351,7 +548,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"宥11\",\r\n    \"gender\": \"male\",\r\n    \"email\": \"xun830321111111d1@gmail.com\",\r\n    \"password\": \"12344321a\",\r\n    \"passwordConfirm\": \"12344321a\"\r\n}",
+							"raw": "{\r\n    \"name\": \"小宥\",\r\n    \"gender\": \"female\",\r\n    \"email\": \"yosontw21@gmail.com\",\r\n    \"password\": \"12345678a\",\r\n    \"passwordConfirm\": \"12345678a\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -394,7 +591,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"yosontw21@gmail.com\",\r\n    \"password\": \"12344321\"\r\n}",
+							"raw": "{\r\n    \"email\": \"xun8303211@gmail.com\",\r\n    \"password\": \"12345678a\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -417,22 +614,27 @@
 				},
 				{
 					"name": "忘記密碼",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set('jwt', pm.response.json().data.token)\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"xun830321@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"email\": \"yosontw21@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -455,6 +657,18 @@
 				},
 				{
 					"name": "更新密碼",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set('jwt', pm.response.json().data.token)\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -470,7 +684,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"passwordCurrent\": \"12344321\",\r\n    \"password\": \"11111111\",\r\n    \"passwordConfirm\": \"11111111\"\r\n}",
+							"raw": "{\r\n    \"passwordCurrent\": \"1234411132a\",\r\n    \"password\": \"11111111a\",\r\n    \"passwordConfirm\": \"11111111a\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -478,9 +692,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{herokuURL}}/api/users/updatePassword",
+							"raw": "{{URL}}/api/users/updatePassword",
 							"host": [
-								"{{herokuURL}}"
+								"{{URL}}"
 							],
 							"path": [
 								"api",
@@ -493,6 +707,55 @@
 				},
 				{
 					"name": "重置密碼",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set('jwt', pm.response.json().data.token)\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"12345678aa\",\r\n    \"passwordConfirm\": \"12345678aa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/users/resetPassword/a152a44d9beb9f25af209036f1795ef101c2656741dd0cbdfb04a8bc8c4ab28d",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"resetPassword",
+								"a152a44d9beb9f25af209036f1795ef101c2656741dd0cbdfb04a8bc8c4ab28d"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "會員按讚追蹤動態",
+			"item": [
+				{
+					"name": "追蹤朋友",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -504,27 +767,106 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "POST",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"password\": \"12345678\",\r\n    \"passwordConfirm\": \"12345678\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "{{URL}}/api/users/resetPassword/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODBiY2ZhZTU2NGJhYWFlODdjMTIyZiIsImlhdCI6MTY1Mjc5MDQ1OCwiZXhwIjoxNjU1MzgyNDU4fQ.vnxHSjc121MLo_MRHvKPFwGpCa5ME0R6ZMCRNsZbO6w",
+							"raw": "{{URL}}/api/users/62a0796a9576ad05ba29a79c/follows",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"api",
 								"users",
-								"resetPassword",
-								"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODBiY2ZhZTU2NGJhYWFlODdjMTIyZiIsImlhdCI6MTY1Mjc5MDQ1OCwiZXhwIjoxNjU1MzgyNDU4fQ.vnxHSjc121MLo_MRHvKPFwGpCa5ME0R6ZMCRNsZbO6w"
+								"62a0796a9576ad05ba29a79c",
+								"follows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取消追蹤朋友",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/users/629f11c568725e35f27ce6fb/follows",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"629f11c568725e35f27ce6fb",
+								"follows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得個人按讚列表",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/users/getLikesList",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"getLikesList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得個人追蹤名單",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/users/getFollowingList",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"getFollowingList"
 							]
 						}
 					},

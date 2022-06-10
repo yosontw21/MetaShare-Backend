@@ -1,13 +1,12 @@
-const appError = require('../config/appError');
-const catchErrorAsync = require('../config/catchErrorAsync');
+const appError = require('../utils/appError');
+const catchErrorAsync = require('../utils/catchErrorAsync');
 const User = require('../models/userModel');
-const sendEmail = require('../config/email');
-const successHandle = require('../config/handleResponse');
+const sendEmail = require('../utils/email');
+const successHandle = require('../utils/handleResponse');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-const validator = require('validator');
 const jwt = require('jsonwebtoken');
-const { token } = require('morgan');
+const passport = require('passport');
 
 const generateSendJWT = (user, statusCode, res) => {
 	let id = user._id;
@@ -26,6 +25,19 @@ const generateSendJWT = (user, statusCode, res) => {
 			role
 		}
 	});
+};
+
+exports.generateUrlJWT = (user, res) => {
+	const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+		expiresIn: process.env.JWT_EXPIRES_DAY
+	});
+	res.redirect(`/api/user/profile}`);
+
+	// res.send({
+	// 	status: 'success',
+	// 	token,
+	// 	name: user.name
+	// });
 };
 
 exports.isAuth = catchErrorAsync(async (req, res, next) => {
@@ -70,39 +82,23 @@ exports.signup = catchErrorAsync(async (req, res, next) => {
 	if (!name || !email || !password || !passwordConfirm) {
 		return appError(400, '欄位未填寫正確', next);
 	}
-	if (password !== passwordConfirm) {
-		return appError(400, '密碼不一致', next);
-	}
-	if (!validator.isEmail(email)) {
-		return appError(400, 'Email 格式不正確', next);
-	}
-
-	if (
-		!validator.isStrongPassword(password, {
-			minLength: 8,
-			minUppercase: 0,
-			minSymbols: 0
-		})
-	) {
-		return appError(400, '密碼不能低於 8 碼，並中英混合', next);
-	}
-
-	password = await bcrypt.hash(password, 12);
 
 	const newUser = await User.create({
 		name,
 		gender,
 		email,
-		password
+		password,
+		passwordConfirm
 	});
 
 	const html = `
-	<h2>註冊成功</h2>
-	<p>哈囉， ${name} 歡迎來到 MetaWall 社交圈</p>`;
+	<h2>恭喜您，註冊成功</h2>
+	<p>親愛的用戶您好， ${name} 歡迎來到 MetaWall 社交圈</p>
+	<p>很高興您加入我們，歡迎使用我們的服務</p>`;
 
 	await sendEmail({
 		email,
-		subject: '恭喜您，註冊成功',
+		subject: '註冊成功通知',
 		html
 	});
 
@@ -131,35 +127,14 @@ exports.updatePassword = catchErrorAsync(async (req, res, next) => {
 	const user = await User.findById(id).select('+password');
 	const auth = await bcrypt.compare(passwordCurrent, user.password);
 
-	if (
-		!validator.isStrongPassword(password, {
-			minLength: 8,
-			minUppercase: 0,
-			minSymbols: 0
-		})
-	) {
-		return appError(400, '密碼不能低於 8 碼，並中英混合', next);
-	}
 	if (!auth) {
 		return appError(400, '當前的密碼不正確', next);
 	}
-	if (password !== passwordConfirm) {
-		return appError(400, '密碼不一致', next);
-	}
-
-	userBody.password = await bcrypt.hash(password, 12);
 
 	user.password = userBody.password;
 	user.passwordConfirm = userBody.passwordConfirm;
 
-	user.passwordConfirm = undefined;
-
 	await user.save();
-	// newPassword = await bcrypt.hash(password, 12);
-
-	// let user = await User.findByIdAndUpdate(id, {
-	// 	password: newPassword
-	// });
 	generateSendJWT(user, 200, res);
 });
 
@@ -212,14 +187,20 @@ exports.resetPassword = catchErrorAsync(async (req, res, next) => {
 		return appError(400, '無效的連結', next);
 	}
 
-	userBody.password = await bcrypt.hash(password, 12);
-
 	user.password = userBody.password;
 	user.passwordConfirm = userBody.passwordConfirm;
 	user.passwordResetToken = undefined;
-	user.passwordConfirm = undefined;
 
 	await user.save();
 
 	generateSendJWT(user, 200, res);
 });
+
+exports.authGoogle = passport.authenticate('google', {
+	scope: ['email', 'profile']
+});
+
+(exports.callbackGoogle = passport.authenticate('google', { session: false })),
+	(req, res) => {
+		generateUrlJWT(req.user, res);
+	};

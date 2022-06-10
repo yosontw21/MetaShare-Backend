@@ -24,28 +24,20 @@ const postScheam = new mongoose.Schema(
 				type: mongoose.Schema.ObjectId,
 				ref: 'user'
 			}
-		],
-		// comments: {
-		// 	type: Number,
-		// 	default: 0
-		// }
-
-		// tags: [
-		// 	{
-		// 		type: String,
-		// 		required: [ true, '貼文標籤 tags 未填寫' ]
-		// 	}
-		// ],
-		// type: {
-		// 	type: String,
-		// 	enum: [ 'group', 'person' ],
-		// 	required: [ true, '貼文類型 type 未填寫，或請輸入 group 或是 person' ]
-		// },
+		]
 	},
 	{
-		versionKey: false
+		versionKey: false,
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true }
 	}
 );
+
+postScheam.virtual('comments', {
+	ref: 'comment',
+	foreignField: 'postId',
+	localField: '_id'
+});
 
 const Post = mongoose.model('post', postScheam);
 

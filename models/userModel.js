@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
+const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const appError = require('../utils/appError');
 
 const userScheam = new mongoose.Schema(
 	{
@@ -12,7 +15,8 @@ const userScheam = new mongoose.Schema(
 			required: [true, 'Email 未填寫'],
 			unique: true,
 			lowercase: true,
-			select: false
+			select: false,
+			validate: [validator.isEmail, 'Email 格式不正確']
 		},
 		gender: {
 			type: String,
@@ -27,6 +31,30 @@ const userScheam = new mongoose.Schema(
 			enum: ['user', 'admin'],
 			default: 'user'
 		},
+		followers: [
+			{
+				user: {
+					type: mongoose.Schema.ObjectId,
+					ref: 'user'
+				},
+				createdAt: {
+					type: Date,
+					default: Date.now
+				}
+			}
+		],
+		following: [
+			{
+				user: {
+					type: mongoose.Schema.ObjectId,
+					ref: 'user'
+				},
+				createdAt: {
+					type: Date,
+					default: Date.now
+				}
+			}
+		],
 		password: {
 			type: String,
 			required: [true, '密碼 未填寫'],
@@ -35,19 +63,42 @@ const userScheam = new mongoose.Schema(
 		},
 		passwordConfirm: {
 			type: String,
-			select: false
+			required: [true, '確認密碼 未填寫'],
+			validate: {
+				validator: function(el) {
+					return el === this.password;
+				},
+				message: '密碼不一致，請重新確認'
+			}
 		},
 		passwordResetToken: String,
 		createdAt: {
 			type: Date,
 			default: Date.now,
 			select: false
-		}
+		},
+		googleId: String
 	},
 	{
 		versionKey: false
 	}
 );
+
+userScheam.pre('save', async function(next) {
+	if (!this.isModified('password')) return next();
+	if (
+		!validator.isStrongPassword(this.password, {
+			minLength: 8,
+			minUppercase: 0,
+			minSymbols: 0
+		})
+	) {
+		return appError(400, '密碼不能低於 8 碼，並中英混合', next);
+	}
+	this.password = await bcrypt.hash(this.password, 12);
+	this.passwordConfirm = undefined;
+	next();
+});
 
 userScheam.methods.createResetToken = function() {
 	const resetToken = crypto.randomBytes(32).toString('hex');
@@ -56,7 +107,6 @@ userScheam.methods.createResetToken = function() {
 		.createHash('sha256')
 		.update(resetToken)
 		.digest('hex');
-
 	return resetToken;
 };
 

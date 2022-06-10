@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
 const rateLimit = require('express-rate-limit');
-
-const handleError = require('./config/handleError');
 const swaggerUI = require('swagger-ui-express');
 const swaggerFile = require('./swagger/swagger-output.json');
+
+const handleError = require('./utils/handleError');
 
 const morgan = require('morgan');
 const cors = require('cors');
@@ -18,7 +18,7 @@ const limiter = rateLimit({
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors());
-app.use('/api',limiter)
+app.use('/api', limiter);
 
 // Routers
 const postRouter = require('./routes/postRouter');

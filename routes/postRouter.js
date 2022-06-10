@@ -1,9 +1,9 @@
 const express = require('express');
-const postRouter = express.Router();
+const router = express.Router();
 const authController = require('../controllers/authController');
 const postController = require('../controllers/postController');
 
-postRouter
+router
 	.route('/posts')
 	.get(authController.isAuth, postController.getAllPosts)
 	.delete(
@@ -12,19 +12,23 @@ postRouter
 		postController.delAllPosts
 	);
 
-postRouter
-	.route('/post')
-	.post(authController.isAuth, postController.createPost);
+router.route('/post').post(authController.isAuth, postController.createPost);
 
-postRouter
+router
 	.route('/post/:id')
 	.get(authController.isAuth, postController.getPost)
 	.delete(authController.isAuth, postController.delPost)
 	.patch(authController.isAuth, postController.updatePost);
 
-postRouter
+router
 	.route('/post/:id/likes')
 	.post(authController.isAuth, postController.likesPost)
 	.delete(authController.isAuth, postController.delLikesPost);
 
-module.exports = postRouter;
+router
+	.route('/post/:id/comments')
+	.post(authController.isAuth, postController.createPostComment)
+	.patch(authController.isAuth, postController.updatePostComment)
+	.delete(authController.isAuth, postController.delPostComment);
+
+module.exports = router;

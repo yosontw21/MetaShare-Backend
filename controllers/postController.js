@@ -1,38 +1,15 @@
 // models
 const Post = require('../models/postModel');
 const User = require('../models/userModel');
-const catchErrorAsync = require('../config/catchErrorAsync');
+const Comment = require('../models/commentModel');
 
-// config
-const successHandle = require('../config/handleResponse');
-const appError = require('../config/appError');
+// utils
+const successHandle = require('../utils/handleResponse');
+const appError = require('../utils/appError');
+const catchErrorAsync = require('../utils/catchErrorAsync');
+const { findById } = require('../models/userModel');
 
 exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
-	/**
-	 * #swagger.tags = ['Posts - 貼文']
-	 * #swagger.description = '取得全部貼文 API'
-	 * #swagger.responses [200] = {
-			description: '貼文資訊',
-	 		schema: {
-				"status": "success",
-				"result": "目前貼文總共有 8 筆",
-				"data": [
-					{
-						"_id": "626d50267f71a50bc7d3b46d",
-						"user": {
-							"_id": "626cfa4aa204668d46f82d49",
-							"name": "Mary",
-							"photo": "https://thumb.fakeface.rest/thumb_female_30_8ab46617938c195cadf80bc11a96ce906a47c110.jpg"
-						},
-						"content": "今天要完周作業",
-						"image": "http:/mmyimagom/210/",
-						"likes": 0,
-						"comments": 0,
-						"createdAt": "2022-04-30T15:05:10.598Z"
-					}]
-			 },
-	 	 }
-	 */
 	let query = req.query;
 	const timeSort = query.timeSort == 'asc' ? 'createdAt' : '-createdAt';
 	const limitPost = query.limit;
@@ -43,24 +20,28 @@ exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 			path: 'user',
 			select: 'name photo'
 		})
+		.populate({
+			path: 'comments',
+			select: 'comment user'
+		})
 		.sort(timeSort)
 		.limit(limitPost);
 	const result = `目前貼文總共有 ${posts.length} 筆`;
-	posts.forEach((item) => {
-		likesQun = item.likes.length;
-		console.log(likesQun);
-	});
-
 	successHandle(posts, 200, res, result);
 });
 
 exports.getPost = catchErrorAsync(async (req, res, next) => {
 	let id = req.params.id;
 
-	const post = await Post.findById(id).populate({
-		path: 'user',
-		select: 'name photo'
-	});
+	const post = await Post.findById(id)
+		.populate({
+			path: 'user',
+			select: 'name photo'
+		})
+		.populate({
+			path: 'comments',
+			select: 'comment user'
+		});
 
 	if (!post) {
 		return appError(400, '找不到貼文資料，或是 id 不正確', next);
@@ -70,21 +51,6 @@ exports.getPost = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.createPost = catchErrorAsync(async (req, res, next) => {
-	/**
-	 * #swagger.tags = ['Posts - 貼文']
-	 * #swagger.description = '新增貼文 API'
-	 * #swagger.parameters['body'] = {
-	  	in: 'body',
-			type: 'object',
-	  	description: '資料格式',
-	  	schema: {
-	 			user: '626cfa4aa204668d46f82d49',
-	  		content: '這是一段話'
-	  	 }
-	   }
-	 }
-	 */
-
 	let post = req.body;
 	let id = req.user.id;
 	let { content, image } = post;
@@ -110,9 +76,6 @@ exports.createPost = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.delAllPosts = catchErrorAsync(async (req, res, next) => {
-	/**
-	 * #swagger.tags = ['Posts - 貼文']
-	 */
 	if (req.originalUrl === '/api/posts/') {
 		return appError(404, '無此網站路由', next);
 	}
@@ -121,16 +84,8 @@ exports.delAllPosts = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.delPost = catchErrorAsync(async (req, res, next) => {
-	/**
-	 * #swagger.tags = ['Posts - 貼文']
-	 * #swagger.description = '刪除單筆貼文 API'
-	 * #swagger.security = [{
-	 			apiKeyAuth: []
-	 }]
-	 */
-
-	let postId = req.params.id;
-	let userId = req.user.id;
+	const postId = req.params.id;
+	const userId = req.user.id;
 
 	const post = await Post.findById(postId).populate({
 		path: 'user',
@@ -155,11 +110,10 @@ exports.updatePost = catchErrorAsync(async (req, res, next) => {
 	 * #swagger.tags = ['Posts - 貼文']
 	 */
 
-	let postId = req.params.id;
-	let userId = req.user.id;
+	const postId = req.params.id;
+	const userId = req.user.id;
 	let post = req.body;
-
-	let { content, image } = post;
+	const { content, image } = post;
 
 	if (!content || content == '') {
 		return appError(400, 'Content 未填寫', next);
@@ -178,7 +132,6 @@ exports.updatePost = catchErrorAsync(async (req, res, next) => {
 		path: 'user',
 		select: 'name photo'
 	});
-	console.log(userId);
 
 	if (!editPost) {
 		return appError(400, '找不到 id，請重新確認', next);
@@ -221,4 +174,70 @@ exports.delLikesPost = catchErrorAsync(async (req, res, next) => {
 		postId: _id,
 		userID
 	});
+});
+
+exports.createPostComment = catchErrorAsync(async (req, res, next) => {
+	const postId = req.params.id;
+	const userId = req.user.id;
+	const { comment } = req.body;
+	if (!comment || comment == '') {
+		return appError(400, 'Comment 未填寫', next);
+	}
+
+	const post = await Post.findById(postId);
+
+	if (post === null) {
+		return appError(400, '無法找到此貼文，請重新確認', next);
+	}
+	const newComment = await Comment.create({
+		postId,
+		userId,
+		comment
+	});
+
+	res.status(201).json({
+		status: 'success',
+		data: {
+			comments: newComment
+		}
+	});
+});
+
+exports.updatePostComment = catchErrorAsync(async (req, res, next) => {
+	const commentId = req.params.id;
+	const userId = req.user.id;
+	const { comment } = req.body;
+	const editComment = await Comment.findByIdAndUpdate(
+		commentId,
+		{ comment },
+		{
+			new: true
+		}
+	);
+
+	if (!editComment) {
+		return appError(400, '找不到 id，請重新確認', next);
+	}
+	if (editComment.userId.id !== userId) {
+		return appError(400, '你無法編輯無他使用者留言', next);
+	}
+	successHandle(editComment, 200, res);
+});
+
+exports.delPostComment = catchErrorAsync(async (req, res, next) => {
+	const commentId = req.params.id;
+	const userId = req.user.id;
+
+	const comment = await Post.findById(commentId).populate({
+		path: 'user',
+		select: 'name photo'
+	});
+
+	if (comment.user.id !== userId) {
+		return appError(400, '你無法刪除無他使用者貼文', next);
+	}
+
+	const delComment = await Comment.findByIdAndDelete(commentId);
+
+	successHandle(delComment, 200, res);
 });

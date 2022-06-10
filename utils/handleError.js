@@ -1,4 +1,4 @@
-// 自定義的 Error 的錯誤 Production
+// 自定義的 Error 的錯誤 Prod
 const resErrorProd = (err, res) => {
 	if (err.isOperational) {
 		res.status(err.statusCode).json({

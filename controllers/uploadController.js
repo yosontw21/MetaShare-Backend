@@ -1,8 +1,8 @@
-const appError = require('../config/appError');
-const catchErrorAsync = require('../config/catchErrorAsync');
+const appError = require('../utils/appError');
+const catchErrorAsync = require('../utils/catchErrorAsync');
 const sizeOf = require('image-size');
-const upload = require('../config/image');
-const successHandle = require('../config/handleResponse');
+const upload = require('../utils/image');
+const successHandle = require('../utils/handleResponse');
 const { ImgurClient } = require('imgur');
 
 exports.uploadImage = catchErrorAsync(async (req, res, next) => {
