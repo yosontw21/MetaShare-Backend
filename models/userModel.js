@@ -84,6 +84,8 @@ const userScheam = new mongoose.Schema(
 	}
 );
 
+
+// 密碼驗證加密
 userScheam.pre('save', async function(next) {
 	if (!this.isModified('password')) return next();
 	if (
@@ -100,6 +102,7 @@ userScheam.pre('save', async function(next) {
 	next();
 });
 
+// 重置密碼驗證
 userScheam.methods.createResetToken = function() {
 	const resetToken = crypto.randomBytes(32).toString('hex');
 
