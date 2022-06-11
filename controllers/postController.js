@@ -7,7 +7,6 @@ const Comment = require('../models/commentModel');
 const successHandle = require('../utils/handleResponse');
 const appError = require('../utils/appError');
 const catchErrorAsync = require('../utils/catchErrorAsync');
-const { findById } = require('../models/userModel');
 
 exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 	let query = req.query;
@@ -26,14 +25,35 @@ exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 		})
 		.sort(timeSort)
 		.limit(limitPost);
-	const result = `目前貼文總共有 ${posts.length} 筆`;
+	const result = `目前所有貼文總共有 ${posts.length} 筆`;
 	successHandle(posts, 200, res, result);
 });
 
-exports.getPost = catchErrorAsync(async (req, res, next) => {
-	let id = req.params.id;
+exports.getUserPosts = catchErrorAsync(async (req, res, next) => {
+	const userId = req.params.id;
 
-	const post = await Post.findById(id)
+	const userPosts = await Post.find({ user: userId })
+		.populate({
+			path: 'user',
+			select: 'name photo'
+		})
+		.populate({
+			path: 'comments',
+			select: 'comment user'
+		});
+
+	if (!userPosts) {
+		return appError(400, '找不到使用者資料 id 不正確', next);
+	}
+	const result = `目前個人貼文總共有 ${userPosts.length} 筆`;
+
+	successHandle(userPosts, 200, res, result);
+});
+
+exports.getPost = catchErrorAsync(async (req, res, next) => {
+	const userId = req.params.id;
+
+	const post = await Post.findById(userId)
 		.populate({
 			path: 'user',
 			select: 'name photo'

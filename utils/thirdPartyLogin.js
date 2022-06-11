@@ -12,6 +12,7 @@ const dotenv = require('dotenv');
 dotenv.config({
 	path: './config.env'
 });
+
 passport.use(
 	new GoogleStrategy(
 		{

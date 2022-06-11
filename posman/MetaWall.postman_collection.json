@@ -70,6 +70,36 @@
 					"response": []
 				},
 				{
+					"name": "取得個人所有貼文",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/posts/user/62a4a89662a05c1c28203c03",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"user",
+								"62a4a89662a05c1c28203c03"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "新增貼文",
 					"request": {
 						"auth": {
@@ -404,10 +434,12 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "{{URL}}/api/users/profile/",
+							"raw": "http://localhost:3000/api/users/profile/",
+							"protocol": "http",
 							"host": [
-								"{{URL}}"
+								"localhost"
 							],
+							"port": "3000",
 							"path": [
 								"api",
 								"users",

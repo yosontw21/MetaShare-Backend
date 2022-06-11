@@ -20,6 +20,12 @@ router
 	.delete(authController.isAuth, postController.delPost)
 	.patch(authController.isAuth, postController.updatePost);
 
+router.get(
+	'/posts/user/:id',
+	authController.isAuth,
+	postController.getUserPosts
+);
+
 router
 	.route('/post/:id/likes')
 	.post(authController.isAuth, postController.likesPost)
