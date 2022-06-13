@@ -31,7 +31,7 @@ passport.use(
 
 			const email = await User.findOne({ email });
 			if (email === profile.emails[0].value) {
-				new appError(400, '此 email 已有註冊，請用此 email 登入', cb);
+				cb(new appError(400, '此 email 已有註冊，請用此 email 登入'));
 			}
 
 			const password = crypto.randomBytes(30).toString('hex');
