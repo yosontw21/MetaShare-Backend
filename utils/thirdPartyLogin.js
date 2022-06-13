@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
-const appError = require('../utils/appError');
 const { generateUrlJWT } = require('../controllers/authController');
 
 const passport = require('passport');
@@ -31,7 +30,7 @@ passport.use(
 
 			const email = await User.findOne({ email });
 			if (email) {
-				return cb(null, email);
+				return cb(null, 'Email 已被註冊，請替換新的 Email');
 			}
 
 			const password = crypto.randomBytes(30).toString('hex');
