@@ -30,8 +30,8 @@ app.use('/api/users', userRouter);
 app.use('/api/upload', uploadRouter);
 
 // utils
-// const thirdPartyRouter =  require('./utils/thirdPartyLogin')
-// app.use('/api/auth',thirdPartyRouter)
+const thirdPartyRouter =  require('./utils/thirdPartyLogin')
+app.use('/api/auth',thirdPartyRouter)
 
 
 app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerFile));
