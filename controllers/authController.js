@@ -96,7 +96,7 @@ exports.signup = catchErrorAsync(async (req, res, next) => {
 	});
 
 	const html = `
-	<h2>恭喜您，註冊成功</h2>
+	<h2>恭喜您 ${name}，註冊成功</h2>
 	<p>親愛的用戶您好， ${name} 歡迎來到 MetaWall 社交圈。</p>
 	<p>很高興您加入我們，歡迎使用我們的服務。</p>`;
 
@@ -167,7 +167,7 @@ exports.forgotPassword = catchErrorAsync(async (req, res, next) => {
 
 	await sendEmail({
 		email,
-		subject: '重置新密碼通知',
+		subject: `哈囉，${user.name}，重置新密碼通知`,
 		html
 	});
 	const message = '成功寄出郵件';
