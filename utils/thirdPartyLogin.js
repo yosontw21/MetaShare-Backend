@@ -31,7 +31,7 @@ passport.use(
 
 			const email = await User.findOne({ email });
 			if (email) {
-				cb(new appError(400, 'email 已有註冊，請替換新的 email'));
+				return appError(400, 'email 已有註冊，請替換新的 email', cb);
 			}
 
 			const password = crypto.randomBytes(30).toString('hex');
