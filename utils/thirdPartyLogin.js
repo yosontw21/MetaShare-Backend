@@ -28,6 +28,11 @@ passport.use(
 				return cb(null, user);
 			}
 
+			// const email = await User.findOne({ email });
+			// if (email === profile.emails[0].value) {
+			// 	return cb(null);
+			// }
+
 			const password = crypto.randomBytes(30).toString('hex');
 
 			const newUser = await User.create({
@@ -37,7 +42,7 @@ passport.use(
 				password,
 				googleId: profile.id
 			});
-			
+
 			return cb(null, newUser);
 		}
 	)

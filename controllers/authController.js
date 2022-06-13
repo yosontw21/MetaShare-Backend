@@ -14,8 +14,15 @@ const generateSendJWT = (user, statusCode, res) => {
 	const token = jwt.sign({ id, name, role }, process.env.JWT_SECRET, {
 		expiresIn: process.env.JWT_EXPIRES_DAY
 	});
+	const cookie = {
+		expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 86400000),
+		secure: true,
+		httpOnly: true
+	};
 
 	user.password = undefined;
+
+	res.cookie('jwt', token, cookie);
 	res.status(statusCode).json({
 		status: 'success',
 		data: {
@@ -76,7 +83,7 @@ exports.isAdmin = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.signup = catchErrorAsync(async (req, res, next) => {
-	const { name, gender, email, password, passwordConfirm } =req.body;
+	const { name, gender, email, password, passwordConfirm } = req.body;
 	if (!name || !email || !password || !passwordConfirm) {
 		return appError(400, '欄位未填寫正確', next);
 	}
@@ -85,7 +92,7 @@ exports.signup = catchErrorAsync(async (req, res, next) => {
 		name,
 		gender,
 		email,
-		password,
+		password
 	});
 
 	const html = `
