@@ -1,6 +1,4 @@
 const multer = require('multer');
-const appError = require('../utils/appError');
-const catchErrorAsync = require('../utils/catchErrorAsync');
 const path = require('path');
 const upload = multer({
 	limits: {
@@ -13,7 +11,6 @@ const upload = multer({
 		}
 		cb(null, true);
 	}
-}).single('image');
-
+}).any();
 
 module.exports = upload;
