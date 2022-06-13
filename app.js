@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const rateLimit = require('express-rate-limit');
 const swaggerUI = require('swagger-ui-express');
-const swaggerFile = require('./swagger/swagger-output.json');
+const swaggerFile = require('./swagger-output.json');
 
 const handleError = require('./utils/handleError');
 
@@ -25,13 +25,14 @@ const postRouter = require('./routes/postRouter');
 const userRouter = require('./routes/userRouter');
 const uploadRouter = require('./routes/uploadRouter');
 
-// utils
-const thirdPartyRouter =  require('./utils/thirdPartyLogin')
-
 app.use('/api', postRouter);
 app.use('/api/users', userRouter);
 app.use('/api/upload', uploadRouter);
-app.use('/api/auth',thirdPartyRouter)
+
+// utils
+// const thirdPartyRouter =  require('./utils/thirdPartyLogin')
+// app.use('/api/auth',thirdPartyRouter)
+
 
 app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerFile));
 

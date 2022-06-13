@@ -9,6 +9,7 @@ const appError = require('../utils/appError');
 const catchErrorAsync = require('../utils/catchErrorAsync');
 
 exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
+
 	let query = req.query;
 	const timeSort = query.timeSort == 'asc' ? 'createdAt' : '-createdAt';
 	const limitPost = query.limit;
@@ -126,10 +127,6 @@ exports.delPost = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.updatePost = catchErrorAsync(async (req, res, next) => {
-	/**
-	 * #swagger.tags = ['Posts - 貼文']
-	 */
-
 	const postId = req.params.id;
 	const userId = req.user.id;
 	let post = req.body;

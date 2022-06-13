@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
+const appError = require('../utils/appError');
 const { generateUrlJWT } = require('../controllers/authController');
 
 const passport = require('passport');
@@ -28,10 +29,10 @@ passport.use(
 				return cb(null, user);
 			}
 
-			// const email = await User.findOne({ email });
-			// if (email === profile.emails[0].value) {
-			// 	return cb(null);
-			// }
+			const email = await User.findOne({ email });
+			if (email === profile.emails[0].value) {
+				new appError(400, '此 email 已有註冊，請用此 email 登入', cb);
+			}
 
 			const password = crypto.randomBytes(30).toString('hex');
 
