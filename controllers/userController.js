@@ -25,7 +25,7 @@ exports.getProfile = catchErrorAsync(async (req, res, next) => {
 exports.updateProfile = catchErrorAsync(async (req, res, next) => {
 	let userBody = req.body;
 	let id = req.user.id;
-	let { name, photo, gender } = userBody;
+	let { name, avatar, gender } = userBody;
 	if (!name) {
 		return appError(400, '名字不可為空', next);
 	}
@@ -103,7 +103,7 @@ exports.getLikesList = catchErrorAsync(async (req, res, next) => {
 		likes: { $in: [req.user.id] }
 	}).populate({
 		path: 'user',
-		select: 'name photo _id'
+		select: 'name avatar _id'
 	});
 	successHandle(likesList, 200, res);
 });

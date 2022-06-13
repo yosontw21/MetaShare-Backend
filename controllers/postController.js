@@ -17,7 +17,7 @@ exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 	const posts = await Post.find(search)
 		.populate({
 			path: 'user',
-			select: 'name photo'
+			select: 'name avatar'
 		})
 		.populate({
 			path: 'comments',
@@ -35,7 +35,7 @@ exports.getUserPosts = catchErrorAsync(async (req, res, next) => {
 	const userPosts = await Post.find({ user: userId })
 		.populate({
 			path: 'user',
-			select: 'name photo'
+			select: 'name avataravatar'
 		})
 		.populate({
 			path: 'comments',
@@ -56,7 +56,7 @@ exports.getPost = catchErrorAsync(async (req, res, next) => {
 	const post = await Post.findById(userId)
 		.populate({
 			path: 'user',
-			select: 'name photo'
+			select: 'name avatar'
 		})
 		.populate({
 			path: 'comments',
@@ -109,7 +109,7 @@ exports.delPost = catchErrorAsync(async (req, res, next) => {
 
 	const post = await Post.findById(postId).populate({
 		path: 'user',
-		select: 'name photo'
+		select: 'name avatar'
 	});
 
 	if (post.user.id !== userId) {
@@ -150,7 +150,7 @@ exports.updatePost = catchErrorAsync(async (req, res, next) => {
 		}
 	).populate({
 		path: 'user',
-		select: 'name photo'
+		select: 'name avatar'
 	});
 
 	if (!editPost) {
@@ -250,7 +250,7 @@ exports.delPostComment = catchErrorAsync(async (req, res, next) => {
 
 	const comment = await Post.findById(commentId).populate({
 		path: 'user',
-		select: 'name photo'
+		select: 'name avatar'
 	});
 
 	if (comment.user.id !== userId) {

@@ -22,7 +22,7 @@ const userScheam = new mongoose.Schema(
 			type: String,
 			enum: ['male', 'female']
 		},
-		photo: {
+		avatar: {
 			type: String,
 			default: ''
 		},
