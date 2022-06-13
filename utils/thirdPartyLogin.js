@@ -30,7 +30,7 @@ passport.use(
 			}
 
 			const email = await User.findOne({ email });
-			if (email) return done(null, user);
+			if (email) return done(null, email);
 
 			const password = crypto.randomBytes(30).toString('hex');
 
