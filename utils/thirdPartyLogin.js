@@ -30,7 +30,7 @@ passport.use(
 
 			const email = await User.findOne({ email });
 			if (email) {
-				return cb(null, 'Email 已被註冊，請替換新的 Email');
+				return cb(null, email);
 			}
 
 			const password = crypto.randomBytes(30).toString('hex');
