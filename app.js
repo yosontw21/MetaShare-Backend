@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const path = require('path');
 const rateLimit = require('express-rate-limit');
 const swaggerUI = require('swagger-ui-express');
 const swaggerFile = require('./swagger-output.json');
@@ -15,24 +16,27 @@ const limiter = rateLimit({
 	message: '此 IP 太多次請求，請於一小時後再試一次'
 });
 
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors());
 app.use('/api', limiter);
 
 // Routers
+const orderRouter = require('./routes/index');
 const postRouter = require('./routes/postRouter');
 const userRouter = require('./routes/userRouter');
 const uploadRouter = require('./routes/uploadRouter');
 
+app.use('/', orderRouter);
 app.use('/api', postRouter);
 app.use('/api/users', userRouter);
 app.use('/api/upload', uploadRouter);
 
 // utils
-const thirdPartyRouter =  require('./utils/thirdPartyLogin')
-app.use('/api/auth',thirdPartyRouter)
-
+const thirdPartyRouter = require('./utils/thirdPartyLogin');
+app.use('/api/auth', thirdPartyRouter);
 
 app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerFile));
 

@@ -18,10 +18,6 @@ const userScheam = new mongoose.Schema(
 			select: false,
 			validate: [validator.isEmail, 'Email 格式不正確']
 		},
-		gender: {
-			type: String,
-			enum: ['male', 'female']
-		},
 		avatar: {
 			type: String,
 			default: ''

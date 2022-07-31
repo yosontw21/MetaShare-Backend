@@ -25,12 +25,9 @@ exports.getProfile = catchErrorAsync(async (req, res, next) => {
 exports.updateProfile = catchErrorAsync(async (req, res, next) => {
 	let userBody = req.body;
 	let id = req.user.id;
-	let { name, avatar, gender } = userBody;
+	let { name, avatar} = userBody;
 	if (!name) {
 		return appError(400, '名字不可為空', next);
-	}
-	if (!gender) {
-		return appError(400, '性別不得為空', next);
 	}
 	const editProfile = await User.findByIdAndUpdate(
 		id,

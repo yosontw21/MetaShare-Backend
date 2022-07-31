@@ -83,14 +83,13 @@ exports.isAdmin = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.signup = catchErrorAsync(async (req, res, next) => {
-	const { name, gender, email, password, passwordConfirm } = req.body;
+	const { name, email, password, passwordConfirm } = req.body;
 	if (!name || !email || !password || !passwordConfirm) {
 		return appError(400, '欄位未填寫正確', next);
 	}
 
 	const newUser = await User.create({
 		name,
-		gender,
 		email,
 		password
 	});
