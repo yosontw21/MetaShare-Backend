@@ -32,7 +32,7 @@ app.use(cors())
 
 app.use(
 	cors({
-		origin: 'http://localhost:8080',
+		origin: 'https://warm-sea-66745.herokuapp.com',
 		credentials: true
 	})
 );
