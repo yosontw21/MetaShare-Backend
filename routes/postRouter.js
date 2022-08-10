@@ -33,6 +33,7 @@ router
 
 router
 	.route('/post/:id/comments')
+	.get(authController.isAuth, postController.getPostComments)
 	.post(authController.isAuth, postController.createPostComment)
 	.patch(authController.isAuth, postController.updatePostComment)
 	.delete(authController.isAuth, postController.delPostComment);

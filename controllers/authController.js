@@ -10,54 +10,43 @@ const jwt = require('jsonwebtoken');
 const generateSendJWT = (user, statusCode, res) => {
 	let id = user._id;
 	let name = user.name;
-	let role = user.role;
-	const token = jwt.sign({ id, name, role }, process.env.JWT_SECRET, {
+	let avatar = user.avatar;
+	const token = jwt.sign({ id, name }, process.env.JWT_SECRET, {
 		expiresIn: process.env.JWT_EXPIRES_DAY
 	});
-	const cookie = {
+	const cookieOptions = {
 		expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 86400000),
-		secure: true,
 		httpOnly: true
+		// secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+	};
+	if (process.env.NODE_ENV === 'production') cookieOptions.secure = false;
+	res.cookie('jwt', token, cookieOptions);
+	let userData = {
+		expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 86400000),
+		token,
+		name,
+		avatar
 	};
 
 	user.password = undefined;
 
-	res.cookie('jwt', token, cookie);
-	res.status(statusCode).json({
-		status: 'success',
-		data: {
-			token,
-			name,
-			role
-		}
-	});
-};
-
-exports.generateUrlJWT = (user, res) => {
-	const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-		expiresIn: process.env.JWT_EXPIRES_DAY
-	});
-	// res.redirect(302, `/callback?token=${token}$name=${user.name}`);
-
-	res.send({
-		status: 'success',
-		token,
-		name: user.name
-	});
+	successHandle(userData, 201, res);
 };
 
 exports.isAuth = catchErrorAsync(async (req, res, next) => {
 	let token;
-	const headerAuth = req.headers.authorization;
-
-	if (headerAuth && headerAuth.startsWith('Bearer')) {
-		token = headerAuth.split(' ')[1];
+	if (
+		req.headers.authorization &&
+		req.headers.authorization.startsWith('Bearer')
+	) {
+		token = req.headers.authorization.split(' ')[1];
+	} else if (req.cookies.jwt) {
+		token = req.cookies.jwt;
 	}
 
 	if (!token) {
-		return appError(401, '你尚未登入', next);
+		return appError(401, '您尚未登入', next);
 	}
-
 	const decoded = await new Promise((resolve, reject) => {
 		jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
 			if (err) {
@@ -67,11 +56,47 @@ exports.isAuth = catchErrorAsync(async (req, res, next) => {
 			}
 		});
 	});
+
 	const currentUser = await User.findById(decoded.id);
 
+	if (!currentUser) {
+		return next();
+	}
 	req.user = currentUser;
 	next();
 });
+
+exports.check = catchErrorAsync(async (req, res, next) => {
+	generateSendJWT(req.user, false, res);
+});
+
+// exports.check = catchErrorAsync(async (req, res, next) => {
+// 	const token = req.cookies.jwt;
+// 	if (token) {
+// 		try {
+// 			const decoded = await new Promise((res, rej) => {
+// 				jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
+// 					if (err) {
+// 						return next(appError(400, '認證失敗，請重新登入'));
+// 					} else {
+// 						res(payload);
+// 					}
+// 				});
+// 			});
+
+// 			const currentUser = await User.findById(decoded.id);
+
+// 			if (!currentUser) {
+// 				return next();
+// 			}
+// 			req.locals.user = currentUser;
+// 			return next();
+// 		} catch (err) {
+// 			return next();
+// 		}
+// 	}
+// 	next();
+// });
 
 exports.isAdmin = catchErrorAsync(async (req, res, next) => {
 	const userRole = req.user.role;
@@ -86,6 +111,10 @@ exports.signup = catchErrorAsync(async (req, res, next) => {
 	const { name, email, password, passwordConfirm } = req.body;
 	if (!name || !email || !password || !passwordConfirm) {
 		return appError(400, '欄位未填寫正確', next);
+	}
+
+	if (password !== passwordConfirm) {
+		return appError(400, '密碼不一致，請重新確認', next);
 	}
 
 	const newUser = await User.create({

@@ -17,8 +17,8 @@ exports.getPosts = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.getProfile = catchErrorAsync(async (req, res, next) => {
-	let id = req.user.id;
-	const user = await User.findById(id);
+
+	const user = await User.findById(req.user.id);
 	successHandle(user, 200, res);
 });
 

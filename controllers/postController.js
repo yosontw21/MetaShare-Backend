@@ -9,7 +9,6 @@ const appError = require('../utils/appError');
 const catchErrorAsync = require('../utils/catchErrorAsync');
 
 exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
-
 	let query = req.query;
 	const timeSort = query.timeSort == 'asc' ? 'createdAt' : '-createdAt';
 	const limitPost = query.limit;
@@ -36,7 +35,7 @@ exports.getUserPosts = catchErrorAsync(async (req, res, next) => {
 	const userPosts = await Post.find({ user: userId })
 		.populate({
 			path: 'user',
-			select: 'name avataravatar'
+			select: 'name avatar'
 		})
 		.populate({
 			path: 'comments',
@@ -191,6 +190,15 @@ exports.delLikesPost = catchErrorAsync(async (req, res, next) => {
 		postId: _id,
 		userID
 	});
+});
+
+exports.getPostComments = catchErrorAsync(async (req, res, next) => {
+	const { id } = req.params;
+	const post = await Post.findById(id).populate({
+		path: 'comments'
+	});
+	const postComments = post.comments;
+	successHandle(postComments, 200, res);
 });
 
 exports.createPostComment = catchErrorAsync(async (req, res, next) => {

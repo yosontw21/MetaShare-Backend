@@ -20,7 +20,7 @@ const userScheam = new mongoose.Schema(
 		},
 		avatar: {
 			type: String,
-			default: ''
+			default: 'https://i.imgur.com/erdqB0d.jpg'
 		},
 		role: {
 			type: String,
