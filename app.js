@@ -32,7 +32,7 @@ app.use(cors())
 
 app.use(
 	cors({
-		origin: 'https://yosontw21.github.io/MetaShare-Frontend',
+		origin: 'https://yosontw21.github.io',
 		credentials: true
 	})
 );
