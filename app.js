@@ -32,7 +32,7 @@ app.use(cors())
 
 app.use(
 	cors({
-		origin: 'https://yosontw21.github.io',
+		origin: 'http://localhost:8080',
 		credentials: true
 	})
 );
