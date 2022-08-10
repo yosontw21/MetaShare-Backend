@@ -32,7 +32,7 @@ app.use(cors())
 
 app.use(
 	cors({
-		origin: 'https://warm-sea-66745.herokuapp.com',
+		origin: 'https://yosontw21.github.io/MetaShare-Frontend',
 		credentials: true
 	})
 );
