@@ -5,6 +5,7 @@ const sendEmail = require('../utils/email');
 const successHandle = require('../utils/handleResponse');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const validator = require('validator');
 const jwt = require('jsonwebtoken');
 
 const generateSendJWT = (user, statusCode, res) => {
@@ -113,6 +114,10 @@ exports.signup = catchErrorAsync(async (req, res, next) => {
 		return appError(400, '欄位未填寫正確', next);
 	}
 
+		if (!validator.isEmail(email)) {
+		return appError(400, 'Email 格式不正確', next);
+	}
+
 	if (password !== passwordConfirm) {
 		return appError(400, '密碼不一致，請重新確認', next);
 	}
@@ -140,12 +145,21 @@ exports.signup = catchErrorAsync(async (req, res, next) => {
 exports.login = catchErrorAsync(async (req, res, next) => {
 	const { email, password } = req.body;
 	if (!email || !password) {
-		return appError(400, '帳號密碼不可為空', next);
+		return appError(400, '欄位未正確填寫', next);
 	}
+
+	if (!validator.isEmail(email)) {
+		return appError(400, 'Email 格式不正確', next);
+	}
+
 	const user = await User.findOne({ email }).select('+password');
+	if (!user) {
+		return appError(400, '您的帳號或密碼不正確', next);
+	}
+
 	const auth = await bcrypt.compare(password, user.password);
 	if (!auth) {
-		return appError(400, '您的密碼不正確', next);
+		return appError(400, '您的帳號或密碼不正確', next);
 	}
 	generateSendJWT(user, 200, res);
 });

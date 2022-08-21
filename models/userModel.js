@@ -54,7 +54,6 @@ const userScheam = new mongoose.Schema(
 		password: {
 			type: String,
 			required: [true, '密碼 未填寫'],
-			minlength: 8,
 			select: false
 		},
 		passwordConfirm: {

@@ -84,9 +84,6 @@ exports.createPost = catchErrorAsync(async (req, res, next) => {
 	if (userId === null) {
 		return appError(400, '無法找到使用者，請重新確認', next);
 	}
-	if (!image) {
-		return appError(400, '圖片 格式錯誤', next);
-	}
 	const addPost = await Post.create({
 		user: req.user.id,
 		content,
