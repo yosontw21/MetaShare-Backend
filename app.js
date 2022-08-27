@@ -33,7 +33,7 @@ app.use(cookieParser());
 
 app.use(
 	cors({
-		origin: 'http://localhost:8080',
+		origin: 'https://yosontw21.github.io',
 		credentials: true
 	})
 );
