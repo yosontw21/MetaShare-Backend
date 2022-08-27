@@ -13,12 +13,16 @@ dotenv.config({
 	path: './config.env'
 });
 
+const app = express();
+const cors = require('cors');
+app.use(cors());
+
 passport.use(
 	new GoogleStrategy(
 		{
 			clientID: process.env.GOOGLE_CLIENT_ID,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-			callbackURL: 'https://warm-sea-66745.herokuapp.com/api/auth/google/callback'
+			callbackURL: 'http://localhost:3000/api/auth/google/callback'
 		},
 		async (accessToken, refreshToken, profile, cb) => {
 			// console.log(profile);
@@ -48,6 +52,7 @@ passport.use(
 
 router.get(
 	'/google',
+	cors(),
 	passport.authenticate('google', {
 		scope: ['email', 'profile']
 	})
@@ -55,8 +60,10 @@ router.get(
 
 router.get(
 	'/google/callback',
+	cors(),
 	passport.authenticate('google', { session: false }),
 	(req, res) => {
+		// console.log(res)
 		const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
 			expiresIn: process.env.JWT_EXPIRES_DAY
 		});
@@ -65,17 +72,18 @@ router.get(
 			httpOnly: true
 			// secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
 		};
+
 		res.cookie('jwt', token, cookieOptions);
-		// res.redirect(
-		// 	302,
-		// 	`http://localhost:8080/index.html?token=${token}$name=${req.user.name}`
-		// );
-		res.send({
-			status: 'success',
-			name: req.user.name,
-			avatar: req.user.avatar,
-			token
-		});
+		res.redirect(
+			302,
+			`http://localhost:8080/dist/#/?token=${token}$name=${req.user.name}`
+		);
+		// res.send({
+		// 	status: 'success',
+		// 	name: req.user.name,
+		// 	avatar: req.user.avatar,
+		// 	token
+		// });
 	}
 );
 
@@ -83,8 +91,8 @@ router.get(
 // 	'/google/callback',
 // 	passport.authenticate('google', { session: false }),
 // 	(req, res) => {
-// 		res.header('Access-Control-Allow-Origin', 'http://localhost:8080'); // 明確指定
-// 		res.header('Access-Control-Allow-Credentials', true); // 新增這個
+
+// 		res.header('Access-Control-Allow-Credentials', true); 
 // 		res.header('Access-Control-Allow-Headers', 'content-type, X-App-Version');
 // 		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
 // 		res.header(

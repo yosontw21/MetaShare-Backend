@@ -21,7 +21,7 @@ exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 		})
 		.populate({
 			path: 'comments',
-			select: 'comment user'
+			select: 'comment createdAt user'
 		})
 		.sort(timeSort)
 		.limit(limitPost);
@@ -214,7 +214,7 @@ exports.createPostComment = catchErrorAsync(async (req, res, next) => {
 	const newComment = await Comment.create({
 		postId,
 		userId,
-		comment
+		comment,
 	});
 
 	res.status(201).json({

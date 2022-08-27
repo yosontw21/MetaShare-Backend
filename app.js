@@ -16,6 +16,7 @@ const limiter = rateLimit({
 	max: 1000,
 	message: '此 IP 太多次請求，請於一小時後再試一次'
 });
+
 const handleError = require('./utils/handleError');
 
 app.use(express.json({ limit: '10kb' }));
@@ -28,17 +29,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors())
+// app.use(cors())
 
 app.use(
 	cors({
-		origin: 'https://yosontw21.github.io',
+		origin: 'http://localhost:8080',
 		credentials: true
 	})
 );
 
 app.use((req, res, next) => {
-	req.requestTime = new Date().toISOString();
+	req.requestTime = new Date().toLocaleString();
 	next();
 });
 

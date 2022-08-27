@@ -114,7 +114,7 @@ exports.signup = catchErrorAsync(async (req, res, next) => {
 		return appError(400, '欄位未填寫正確', next);
 	}
 
-		if (!validator.isEmail(email)) {
+	if (!validator.isEmail(email)) {
 		return appError(400, 'Email 格式不正確', next);
 	}
 
@@ -129,8 +129,11 @@ exports.signup = catchErrorAsync(async (req, res, next) => {
 	});
 
 	const html = `
+	<img src="https://raw.githubusercontent.com/yosontw21/MetaShare-Frontend/master/src/assets/images/1c9b3870.png" style="height: 54px;
+    width: 270px;
+    display: block;">
 	<h2>恭喜您 ${name}，註冊成功</h2>
-	<p>親愛的用戶您好， ${name} 歡迎來到 MetaWall 社交圈。</p>
+	<p>親愛的用戶您好， ${name} 歡迎來到 MetaShare 社交圈。</p>
 	<p>很高興您加入我們，歡迎使用我們的服務。</p>`;
 
 	await sendEmail({
