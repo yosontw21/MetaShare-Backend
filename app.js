@@ -30,13 +30,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
-app.options('*', cors());
+// app.options('*', cors());
 
-// app.use(
-// 	cors({
-// 		origin: ['http://localhost:8080', 'https://accounts.google.com']
-// 	})
-// );
+app.use(
+	cors({
+		origin: ['http://localhost:8080', 'https://warm-sea-66745.herokuapp.com']
+	})
+);
 
 app.use((req, res, next) => {
 	req.requestTime = new Date().toLocaleString();
