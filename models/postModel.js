@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const postScheam = new mongoose.Schema(
+const postSchema = new mongoose.Schema(
 	{
 		user: {
 			type: mongoose.Schema.ObjectId,
@@ -33,12 +33,28 @@ const postScheam = new mongoose.Schema(
 	}
 );
 
-postScheam.virtual('comments', {
+postSchema.virtual('comments', {
 	ref: 'comment',
 	foreignField: 'postId',
 	localField: '_id'
 });
 
-const Post = mongoose.model('post', postScheam);
+postSchema.pre(/^find/, function(next) {
+	this.populate({
+		path: 'user',
+		select: '-following -followers'
+	});
+	next();
+});
+
+postSchema.pre(/^find/, function(next) {
+	this.populate({
+		path: 'likes',
+		select: '-following -followers -passwordResetToken -personalInfo '
+	});
+	next();
+});
+
+const Post = mongoose.model('post', postSchema);
 
 module.exports = Post;

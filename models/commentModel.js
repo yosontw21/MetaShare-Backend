@@ -29,7 +29,7 @@ const commentsSchema = new mongoose.Schema(
 commentsSchema.pre(/^find/, function(next) {
 	this.populate({
 		path: 'userId',
-		select: 'name avatar id createdAt'
+		select: '_id -following -followers'
 	});
 	next();
 });

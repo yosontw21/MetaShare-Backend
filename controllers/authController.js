@@ -67,9 +67,9 @@ exports.isAuth = catchErrorAsync(async (req, res, next) => {
 	next();
 });
 
-exports.check = catchErrorAsync(async (req, res, next) => {
+exports.check = async (req, res, next) => {
 	generateSendJWT(req.user, false, res);
-});
+};
 
 // exports.check = catchErrorAsync(async (req, res, next) => {
 // 	const token = req.cookies.jwt;
@@ -167,6 +167,15 @@ exports.login = catchErrorAsync(async (req, res, next) => {
 	generateSendJWT(user, 200, res);
 });
 
+exports.logout = (req, res, next) => {
+	res.cookie('jwt', 'expires', {
+		expires: new Date(Date.now() + 1 * 1000),
+		httpOnly: true
+	});
+	res.clearCookie('jwt');
+	successHandle('', 200, res);
+};
+
 exports.updatePassword = catchErrorAsync(async (req, res, next) => {
 	let userBody = req.body;
 	const id = req.user.id;
@@ -196,13 +205,16 @@ exports.forgotPassword = catchErrorAsync(async (req, res, next) => {
 
 	const resetToken = user.createResetToken();
 
-	const resetURL = `${req.protocol}://${req.get(
-		'host'
-	)}/api/users/resetPassword/${resetToken}`;
+	const resetURL = `http://localhost:8080/MetaShare-Frontend/dist/#/resetpassword/${resetToken}`;
 
 	await user.save();
 
 	const html = `
+		<img src="https://raw.githubusercontent.com/yosontw21/MetaShare-Frontend/master/src/assets/images/1c9b3870.png" style="height: 54px;
+    width: 270px;
+    display: block;
+		margin-bottom: 12px;
+		">
 	<h2>重置密碼</h2>
 	<p>哈囉， ${user.name} 忘記密碼了嗎?</p>
 	<p>要完成密碼重置過程，請訪問以下連結:</p>
@@ -233,6 +245,10 @@ exports.resetPassword = catchErrorAsync(async (req, res, next) => {
 
 	if (!user) {
 		return appError(400, '無效的連結', next);
+	}
+
+	if (userBody.password !== userBody.passwordConfirm) {
+		return appError(400, '密碼不一致，請重新確認', next);
 	}
 
 	user.password = userBody.password;

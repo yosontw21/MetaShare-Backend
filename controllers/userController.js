@@ -16,21 +16,39 @@ exports.getPosts = catchErrorAsync(async (req, res, next) => {
 	successHandle(posts, 200, res, result);
 });
 
-exports.getProfile = catchErrorAsync(async (req, res, next) => {
-	const user = await User.findById(req.user.id);
-	successHandle(user, 200, res);
+exports.getUsers = catchErrorAsync(async (req, res, next) => {
+	const Users = await User.find({}).sort({ name: 1 });
+	successHandle(Users, 200, res);
+});
+
+exports.getMyProfile = catchErrorAsync(async (req, res, next) => {
+	const myProfile = await User.findById(req.user.id);
+	if (!myProfile) {
+		return appError(400, '查無此用戶', next);
+	}
+	successHandle(myProfile, 200, res);
+});
+
+exports.getOtherProfile = catchErrorAsync(async (req, res, next) => {
+	const { id } = req.params;
+
+	const OtherProfile = await User.findById(id);
+	if (!OtherProfile) {
+		return appError(400, '查無此用戶', next);
+	}
+	successHandle(OtherProfile, 200, res);
 });
 
 exports.updateProfile = catchErrorAsync(async (req, res, next) => {
 	let userBody = req.body;
 	let id = req.user.id;
-	let { name, avatar} = userBody;
+	let { name, avatar, personalInfo } = userBody;
 	if (!name) {
 		return appError(400, '名字不可為空', next);
 	}
 	const editProfile = await User.findByIdAndUpdate(
 		id,
-		{ ...userBody },
+		{ name, avatar, personalInfo },
 		{
 			new: true
 		}
@@ -95,9 +113,16 @@ exports.delFollow = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.getLikesList = catchErrorAsync(async (req, res, next) => {
-	const likesList = await Post.find({
-		likes: { $in: [req.user.id] }
-	}).populate({
+	const likesList = await Post.find(
+		{
+			likes: { $in: [req.user.id] }
+		},
+		{
+			content: false,
+			image: false,
+			likes: false
+		}
+	).populate({
 		path: 'user',
 		select: 'name avatar _id'
 	});
@@ -107,7 +132,7 @@ exports.getLikesList = catchErrorAsync(async (req, res, next) => {
 exports.getFollowingList = catchErrorAsync(async (req, res, next) => {
 	const followingList = await User.findById({
 		_id: req.user.id
-	}).select('following followers')
-	
+	}).select('following');
+
 	successHandle(followingList, 200, res);
 });

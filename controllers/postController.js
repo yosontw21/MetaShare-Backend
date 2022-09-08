@@ -23,6 +23,10 @@ exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 			path: 'comments',
 			select: 'comment createdAt user'
 		})
+		.populate({
+			path: 'likes',
+			select: 'name avatar'
+		})
 		.sort(timeSort)
 		.limit(limitPost);
 	const result = `目前所有貼文總共有 ${posts.length} 筆`;
@@ -30,8 +34,11 @@ exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 });
 
 exports.getUserPosts = catchErrorAsync(async (req, res, next) => {
-	const userId = req.params.id;
+	let query = req.query;
+	const timeSort = query.timeSort == 'asc' ? 'createdAt' : '-createdAt';
+	const limitPost = query.limit;
 
+	const userId = req.params.id;
 	const userPosts = await Post.find({ user: userId })
 		.populate({
 			path: 'user',
@@ -39,8 +46,10 @@ exports.getUserPosts = catchErrorAsync(async (req, res, next) => {
 		})
 		.populate({
 			path: 'comments',
-			select: 'comment user'
-		});
+			select: 'comment user createdAt'
+		})
+		.sort(timeSort)
+		.limit(limitPost);
 
 	if (!userPosts) {
 		return appError(400, '找不到使用者資料 id 不正確', next);
@@ -131,9 +140,9 @@ exports.updatePost = catchErrorAsync(async (req, res, next) => {
 	if (!content || content == '') {
 		return appError(400, 'Content 未填寫', next);
 	}
-	if (!image) {
-		return appError(400, 'image 格式錯誤', next);
-	}
+	// if (!image) {
+	// 	return appError(400, 'image 格式錯誤', next);
+	// }
 
 	const editPost = await Post.findByIdAndUpdate(
 		postId,
@@ -158,34 +167,36 @@ exports.updatePost = catchErrorAsync(async (req, res, next) => {
 
 exports.likesPost = catchErrorAsync(async (req, res, next) => {
 	const _id = req.params.id;
-	const userID = req.user.id;
+	const userId = req.user.id;
 	await Post.findByIdAndUpdate(
-		{ _id },
 		{
-			$addToSet: { likes: userID }
+			_id
+		},
+		{
+			$addToSet: { likes: userId }
 		}
 	);
 	res.status(201).json({
 		status: 'success',
 		postId: _id,
-		userID
+		userId
 	});
 	// successHandle(likePost, 201, res);
 });
 
 exports.delLikesPost = catchErrorAsync(async (req, res, next) => {
 	const _id = req.params.id;
-	const userID = req.user.id;
+	const userId = req.user.id;
 	await Post.findByIdAndUpdate(
 		{ _id },
 		{
-			$pull: { likes: userID }
+			$pull: { likes: userId }
 		}
 	);
 	res.status(201).json({
 		status: 'success',
 		postId: _id,
-		userID
+		userId
 	});
 });
 
@@ -214,7 +225,12 @@ exports.createPostComment = catchErrorAsync(async (req, res, next) => {
 	const newComment = await Comment.create({
 		postId,
 		userId,
-		comment,
+		comment
+	});
+
+	await Comment.populate(newComment, {
+		path: 'user',
+		select: '_id -following -followers'
 	});
 
 	res.status(201).json({

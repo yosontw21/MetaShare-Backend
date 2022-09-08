@@ -13,4 +13,19 @@ const upload = multer({
 	}
 }).any();
 
+// const checkUpload = handleErrorAsync(async (req, res, next) => {
+//   upload(req, res, async (err) => {
+//     if (err) {
+//       return next(appError(400, err.message))
+//     }
+//     if (!req.file) {
+//       return next(appError(400, '請選擇一張圖片上傳'))
+//     }
+//     if (req.file?.size > 1000000) {
+//       return next(appError(400, '圖片檔案過大，僅限 1mb 以下檔案'))
+//     }
+//     next()
+//   })
+// })
+
 module.exports = upload;

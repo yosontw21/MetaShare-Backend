@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const appError = require('../utils/appError');
 
-const userScheam = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
@@ -27,8 +27,13 @@ const userScheam = new mongoose.Schema(
 			enum: ['user', 'admin'],
 			default: 'user'
 		},
+		personalInfo: {
+			type: String,
+			default: ''
+		},
 		followers: [
 			{
+				_id: false,
 				user: {
 					type: mongoose.Schema.ObjectId,
 					ref: 'user'
@@ -41,6 +46,7 @@ const userScheam = new mongoose.Schema(
 		],
 		following: [
 			{
+				_id: false,
 				user: {
 					type: mongoose.Schema.ObjectId,
 					ref: 'user'
@@ -78,9 +84,8 @@ const userScheam = new mongoose.Schema(
 	}
 );
 
-
 // 密碼驗證加密
-userScheam.pre('save', async function(next) {
+userSchema.pre('save', async function(next) {
 	if (!this.isModified('password')) return next();
 	if (
 		!validator.isStrongPassword(this.password, {
@@ -96,8 +101,25 @@ userScheam.pre('save', async function(next) {
 	next();
 });
 
+userSchema.pre(/^find/, function(next) {
+	this.populate({
+		path: 'following.user',
+		select: '-createdAt -following -followers'
+	});
+	next();
+});
+
+userSchema.pre(/^find/, function(next) {
+	this.populate({
+		path: 'followers.user',
+		select: '-createdAt -following -followers'
+	});
+	next();
+});
+
+
 // 重置密碼驗證
-userScheam.methods.createResetToken = function() {
+userSchema.methods.createResetToken = function() {
 	const resetToken = crypto.randomBytes(32).toString('hex');
 
 	this.passwordResetToken = crypto
@@ -107,6 +129,6 @@ userScheam.methods.createResetToken = function() {
 	return resetToken;
 };
 
-const User = mongoose.model('user', userScheam);
+const User = mongoose.model('user', userSchema);
 
 module.exports = User;

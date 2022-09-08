@@ -12,7 +12,7 @@ const sendEmail = async (options) => {
 	});
 
 	const mailOptions = {
-		from: 'MetaWall 社交圈<yosontw21@gmail.com>',
+		from: `MetaWall 社交圈<${process.env.SEND_EMAIL}>`,
 		to: options.email,
 		subject: options.subject,
 		text: options.message,

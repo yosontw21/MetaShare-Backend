@@ -31,5 +31,5 @@ exports.uploadImage = catchErrorAsync(async (req, res, next) => {
 		album: process.env.IMGUR_ALBUM_ID
 	});
 	const imgUrl = response.data.link;
-	successHandle(imgUrl, 200, res);
+	successHandle( imgUrl , 200, res);
 });

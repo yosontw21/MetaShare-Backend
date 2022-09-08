@@ -52,7 +52,6 @@ passport.use(
 
 router.get(
 	'/google',
-	cors(),
 	passport.authenticate('google', {
 		scope: ['email', 'profile']
 	})
@@ -63,6 +62,7 @@ router.get(
 	cors(),
 	passport.authenticate('google', { session: false }),
 	(req, res) => {
+		// res.header('Access-Control-Allow-Origin', 'https://accounts.google.com/o/oauth2');
 		// console.log(res)
 		const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
 			expiresIn: process.env.JWT_EXPIRES_DAY
@@ -92,7 +92,7 @@ router.get(
 // 	passport.authenticate('google', { session: false }),
 // 	(req, res) => {
 
-// 		res.header('Access-Control-Allow-Credentials', true); 
+// 		res.header('Access-Control-Allow-Credentials', true);
 // 		res.header('Access-Control-Allow-Headers', 'content-type, X-App-Version');
 // 		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
 // 		res.header(

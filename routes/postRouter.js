@@ -8,7 +8,7 @@ router
 	.get(authController.isAuth, postController.getAllPosts)
 	.delete(
 		authController.isAuth,
-		authController.isAdmin,
+
 		postController.delAllPosts
 	);
 

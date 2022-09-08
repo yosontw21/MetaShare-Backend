@@ -29,14 +29,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-// app.use(cors())
+app.use(cors());
+app.options('*', cors());
 
-app.use(
-	cors({
-		origin: 'https://yosontw21.github.io',
-		credentials: true
-	})
-);
+// app.use(
+// 	cors({
+// 		origin: ['http://localhost:8080', 'https://accounts.google.com']
+// 	})
+// );
 
 app.use((req, res, next) => {
 	req.requestTime = new Date().toLocaleString();
