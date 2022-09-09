@@ -129,7 +129,7 @@ exports.signup = catchErrorAsync(async (req, res, next) => {
 	});
 
 	const html = `
-	<img src="https://raw.githubusercontent.com/yosontw21/MetaShare-Frontend/master/src/assets/images/1c9b3870.png" style="height: 54px;
+	<img src="https://raw.githubusercontent.com/yosontw21/MetaShare/master/src/assets/images/1c9b3870.png" style="height: 54px;
     width: 270px;
     display: block;">
 	<h2>恭喜您 ${name}，註冊成功</h2>
@@ -205,12 +205,12 @@ exports.forgotPassword = catchErrorAsync(async (req, res, next) => {
 
 	const resetToken = user.createResetToken();
 
-	const resetURL = `http://localhost:8080/MetaShare-Frontend/dist/#/resetpassword/${resetToken}`;
+	const resetURL = `https://yosontw21.github.io/MetaShare/#/resetpassword/${resetToken}`;
 
 	await user.save();
 
 	const html = `
-		<img src="https://raw.githubusercontent.com/yosontw21/MetaShare-Frontend/master/src/assets/images/1c9b3870.png" style="height: 54px;
+		<img src="https://raw.githubusercontent.com/yosontw21/MetaShare/master/src/assets/images/1c9b3870.png" style="height: 54px;
     width: 270px;
     display: block;
 		margin-bottom: 12px;
