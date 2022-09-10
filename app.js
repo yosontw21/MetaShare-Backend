@@ -34,7 +34,7 @@ app.use(cors());
 
 app.use(
 	cors({
-		origin: ['http://localhost:8080', 'https://warm-sea-66745.herokuapp.com']
+		origin: ['http://localhost:8080', 'https://yosontw21.github.io']
 	})
 );
 
