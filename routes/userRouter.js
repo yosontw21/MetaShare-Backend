@@ -17,6 +17,7 @@ router.patch(
 // router.get('/check', authController.isAuth, authController.check);
 
 router.get('/', authController.isAuth, userController.getUsers);
+
 router
 	.route('/myProfile')
 	.patch(authController.isAuth, userController.updateProfile)

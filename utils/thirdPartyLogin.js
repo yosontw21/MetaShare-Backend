@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-
 const passport = require('passport');
+
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const User = require('../models/userModel');
@@ -12,10 +12,6 @@ const dotenv = require('dotenv');
 dotenv.config({
 	path: './config.env'
 });
-
-const app = express();
-const cors = require('cors');
-app.use(cors());
 
 passport.use(
 	new GoogleStrategy(
@@ -59,48 +55,18 @@ router.get(
 
 router.get(
 	'/google/callback',
-	cors(),
 	passport.authenticate('google', { session: false }),
 	(req, res) => {
-		// res.header('Access-Control-Allow-Origin', 'https://accounts.google.com/o/oauth2');
-		// console.log(res)
 		const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
 			expiresIn: process.env.JWT_EXPIRES_DAY
 		});
 		const cookieOptions = {
-			expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 86400000),
-			httpOnly: true
-			// secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+			expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 86400000)
 		};
-
+		if (process.env.NODE_ENV === 'production') cookieOptions.secure = false;
 		res.cookie('jwt', token, cookieOptions);
-		res.redirect(
-			302,
-			`http://localhost:8080/dist/#/?token=${token}$name=${req.user.name}`
-		);
-		// res.send({
-		// 	status: 'success',
-		// 	name: req.user.name,
-		// 	avatar: req.user.avatar,
-		// 	token
-		// });
+		res.redirect(302, `${process.env.CLIENT_BASE_URL}/dist/#/post`);
 	}
 );
-
-// router.options(
-// 	'/google/callback',
-// 	passport.authenticate('google', { session: false }),
-// 	(req, res) => {
-
-// 		res.header('Access-Control-Allow-Credentials', true);
-// 		res.header('Access-Control-Allow-Headers', 'content-type, X-App-Version');
-// 		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-// 		res.header(
-// 			'Access-Control-Allow-Headers',
-// 			'Origin, X-Requested-With, Content-Type, Accept'
-// 		);
-// 		res.end();
-// 	}
-// );
 
 module.exports = router;
