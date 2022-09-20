@@ -64,7 +64,6 @@ router.get(
 			expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 86400000),
 			httpOnly: false
 		};
-		if (process.env.NODE_ENV === 'production') cookieOptions.secure = false;
 		res.cookie('jwt', token, cookieOptions);
 		res.redirect(
 			302,
