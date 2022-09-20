@@ -9,6 +9,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/userModel');
 
 const dotenv = require('dotenv');
+const { default: axios } = require('axios');
 dotenv.config({
 	path: './config.env'
 });
@@ -57,13 +58,22 @@ router.get(
 	'/google/callback',
 	passport.authenticate('google', { session: false }),
 	(req, res) => {
-		const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
+		let token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
 			expiresIn: process.env.JWT_EXPIRES_DAY
 		});
+		if (
+			req.headers.authorization &&
+			req.headers.authorization.startsWith('Bearer')
+		) {
+			token = req.headers.authorization.split(' ')[1];
+		} else if (req.cookies.jwt) {
+			token = req.cookies.jwt;
+		}
 		const cookieOptions = {
-			expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 86400000),
+			expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 86400000)
 		};
 		res.cookie('jwt', token, cookieOptions);
+		res.header();
 		res.redirect(
 			302,
 			`${process.env.CLIENT_BASE_URL}/MetaShare/#/post?token=${token}`
