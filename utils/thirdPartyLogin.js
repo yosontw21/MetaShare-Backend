@@ -65,7 +65,10 @@ router.get(
 		};
 		if (process.env.NODE_ENV === 'production') cookieOptions.secure = false;
 		res.cookie('jwt', token, cookieOptions);
-		res.redirect(302, `${process.env.CLIENT_BASE_URL}/MetaShare/#/post`);
+		res.redirect(
+			302,
+			`${process.env.CLIENT_BASE_URL}/MetaShare/#/post?token=${token}`
+		);
 	}
 );
 
