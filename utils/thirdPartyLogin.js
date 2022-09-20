@@ -58,21 +58,15 @@ router.get(
 	'/google/callback',
 	passport.authenticate('google', { session: false }),
 	(req, res) => {
-		let token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
+		const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
 			expiresIn: process.env.JWT_EXPIRES_DAY
 		});
-		if (
-			req.headers.authorization &&
-			req.headers.authorization.startsWith('Bearer')
-		) {
-			token = req.headers.authorization.split(' ')[1];
-		} else if (req.cookies.jwt) {
-			token = req.cookies.jwt;
-		}
 		const cookieOptions = {
 			expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 86400000)
 		};
-		res.cookie('jwt', token, cookieOptions);
+		res.cookie('jwt', token, cookieOptions, {
+			domain: `${process.env.CLIENT_BASE_URL}`
+		});
 		res.header();
 		res.redirect(
 			302,
