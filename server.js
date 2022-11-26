@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 const app = require('./app');
 
-
 const dotenv = require('dotenv');
 dotenv.config({
 	path: './config.env'
 });
-
 
 // 程式出現重大錯誤時
 process.on('uncaughtException', (err) => {
@@ -17,7 +15,6 @@ process.on('uncaughtException', (err) => {
 	console.error('錯誤訊息:', err.message);
 	process.exit(1);
 });
-
 
 const DB = process.env.DATABASE.replace(
 	'<password>',

@@ -23,6 +23,7 @@
 		"nodemailer": "^6.7.5",
 		"passport": "^0.6.0",
 		"passport-google-oauth20": "^2.0.0",
+		"socket.io": "^4.5.2",
 		"swagger-autogen": "^2.5.10",
 		"swagger-ui-express": "^4.3.0",
 		"tslib": "^2.4.0",

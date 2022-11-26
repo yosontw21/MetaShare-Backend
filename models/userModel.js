@@ -71,7 +71,10 @@ const userSchema = new mongoose.Schema(
 				message: '密碼不一致，請重新確認'
 			}
 		},
-		passwordResetToken: String,
+		passwordResetToken: {
+			type: String,
+			select: false
+		},
 		createdAt: {
 			type: Date,
 			default: Date.now,
@@ -116,7 +119,6 @@ userSchema.pre(/^find/, function(next) {
 	});
 	next();
 });
-
 
 // 重置密碼驗證
 userSchema.methods.createResetToken = function() {

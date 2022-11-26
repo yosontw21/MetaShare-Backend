@@ -206,7 +206,7 @@ exports.forgotPassword = catchErrorAsync(async (req, res, next) => {
 
 	const resetURL = `https://yosontw21.github.io/MetaShare/#/resetpassword/${resetToken}`;
 
-	await user.save();
+	await user.save({ validateBeforeSave: false });
 
 	const html = `
 		<img src="https://raw.githubusercontent.com/yosontw21/MetaShare/master/src/assets/images/1c9b3870.png" style="height: 54px;
@@ -239,7 +239,7 @@ exports.resetPassword = catchErrorAsync(async (req, res, next) => {
 		.digest('hex');
 
 	const user = await User.findOne({
-		passwordResetToken: resetToken
+		passwordResetToken: resetToken,
 	});
 
 	if (!user) {
