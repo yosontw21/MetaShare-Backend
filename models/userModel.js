@@ -15,7 +15,6 @@ const userSchema = new mongoose.Schema(
 			required: [true, 'Email 未填寫'],
 			unique: true,
 			lowercase: true,
-			select: false,
 			validate: [validator.isEmail, 'Email 格式不正確']
 		},
 		avatar: {
