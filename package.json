@@ -36,7 +36,7 @@
 		"start": "node server.js",
 		"start:prod": "cross-env NODE_ENV=production nodemon server.js",
 		"start:dev": "cross-env NODE_ENV=dev nodemon server.js",
-		"swagger": "node ./swagger.js"
+		"swagger": "./swagger.js"
 	},
 	"engines": {
 		"node": "v16.x"

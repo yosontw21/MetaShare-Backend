@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Meta API",
-    "description": "範例文件"
+    "title": "MetaShare API",
+    "description": "MetaShare 相關 API"
   },
   "host": "localhost:3000",
   "basePath": "/",
@@ -12,58 +12,617 @@
     "https"
   ],
   "securityDefinitions": {
-    "apiKeyAuth": {
+    "JSON Web Token": {
       "type": "apiKey",
+      "schema": "bearer",
+      "bearerFormat": "JWT",
       "in": "headers",
       "name": "authorization",
-      "description": "請加上 API Token"
+      "description": "Bearer token"
     }
   },
   "consumes": [],
   "produces": [],
   "paths": {
     "/api/posts": {
-      "delete": {
-        "tags": [],
+      "get": {
+        "tags": [
+          "動態貼文"
+        ],
+        "summary": "取得所有貼文 API",
         "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "關鍵字",
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "排序方式，desc 為新至舊，asc 為舊至新",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取得所有貼文成功",
+            "schema": {
+              "$ref": "#/definitions/getAllPosts_Schema"
+            }
+          },
+          "401": {
+            "description": "未登入狀態",
+            "schema": {
+              "$ref": "#/definitions/error_noLoggin_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
     "/api/post": {
       "post": {
-        "tags": [],
+        "tags": [
+          "動態貼文"
+        ],
+        "summary": "新增貼文 API",
         "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "parameters_name",
+            "in": "body",
+            "description": "新增貼文輸入的格式",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "example": "你好"
+                },
+                "image": {
+                  "type": "string",
+                  "example": "https://i.imgur.com/ORZG2h7.jpg"
+                }
+              }
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "新增貼文成功",
+            "schema": {
+              "$ref": "#/definitions/createPost_Schema"
+            }
+          },
+          "400": {
+            "description": "操作錯誤會出現其中一個訊息",
+            "schema": {
+              "$ref": "#/definitions/error_createPost_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
     "/api/post/{id}": {
-      "patch": {
-        "tags": [],
+      "get": {
+        "tags": [
+          "動態貼文"
+        ],
+        "summary": "取得單筆貼文 API",
         "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "輸入 Post id",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取得貼文成功",
+            "schema": {
+              "$ref": "#/definitions/post_Schema"
+            }
+          },
+          "400": {
+            "description": "找不到貼文資料",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "找不到貼文資料，或是 id 不正確"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "無效的 ID",
+            "schema": {
+              "$ref": "#/definitions/error_postId_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "動態貼文"
+        ],
+        "summary": "刪除單筆貼文 API",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "輸入 Post id",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "刪除貼文成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "操作錯誤會出現其中一個訊息",
+            "schema": {
+              "$ref": "#/definitions/error_deletePost_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "動態貼文"
+        ],
+        "summary": "編輯單筆貼文 API",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "輸入 Post id",
+            "type": "string"
+          },
+          {
+            "name": "parameters_name",
+            "in": "body",
+            "description": "編輯貼文的格式",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "example": "你好"
+                },
+                "image": {
+                  "type": "string",
+                  "example": "https://i.imgur.com/ORZG2h7.jpg"
+                }
+              }
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "編輯貼文成功",
+            "schema": {
+              "$ref": "#/definitions/post_Schema"
+            }
+          },
+          "400": {
+            "description": "操作錯誤會出現其中一個訊息",
+            "schema": {
+              "$ref": "#/definitions/error_updatePost_Schema"
+            }
+          },
+          "500": {
+            "description": "無效的 ID",
+            "schema": {
+              "$ref": "#/definitions/error_postId_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
     "/api/posts/user/{id}": {
       "get": {
-        "tags": [],
+        "tags": [
+          "動態貼文"
+        ],
+        "summary": "取得個人所有貼文 API",
         "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "輸入 User id",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取得個人貼文成功",
+            "schema": {
+              "$ref": "#/definitions/getUserPosts_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
     "/api/post/{id}/likes": {
-      "delete": {
-        "tags": [],
+      "post": {
+        "tags": [
+          "動態貼文"
+        ],
+        "summary": "新增貼文讚 API",
         "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "輸入 Post id",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "按讚成功",
+            "schema": {
+              "$ref": "#/definitions/postLike_Schema"
+            }
+          },
+          "400": {
+            "description": "找不到 ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "找不到 id，請重新確認"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "無效的 ID",
+            "schema": {
+              "$ref": "#/definitions/error_postId_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "動態貼文"
+        ],
+        "summary": "取消增貼文讚 API",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "輸入 Post id",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消按讚成功",
+            "schema": {
+              "$ref": "#/definitions/postLike_Schema"
+            }
+          },
+          "400": {
+            "description": "找不到 ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "找不到 id，請重新確認"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "無效的 ID",
+            "schema": {
+              "$ref": "#/definitions/error_postId_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
     "/api/post/{id}/comments": {
+      "post": {
+        "tags": [
+          "動態貼文"
+        ],
+        "summary": "新增貼文留言 API",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "輸入 Post id",
+            "type": "string"
+          },
+          {
+            "name": "parameters_name",
+            "in": "body",
+            "description": "新增留言的格式",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "comment": {
+                  "type": "string",
+                  "example": "你好"
+                }
+              }
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "新增留言成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "comments": {
+                      "type": "object",
+                      "properties": {
+                        "comment": {
+                          "type": "string",
+                          "example": "嘿嘿"
+                        },
+                        "userId": {
+                          "type": "string",
+                          "example": "62ee6d4fdb480a3990f5d3ee"
+                        },
+                        "postId": {
+                          "type": "string",
+                          "example": "63993f9282069f3f28815d92"
+                        },
+                        "_id": {
+                          "type": "string",
+                          "example": "639a85c14f4144f93c8b49fb"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2022-12-15T02:26:09.634Z"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "無法找到此貼文",
+            "schema": {
+              "$ref": "#/definitions/error_post_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "動態貼文"
+        ],
+        "summary": "刪除貼文留言 API",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "輸入 Comment id",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "刪除留言成功",
+            "schema": {
+              "$ref": "#/definitions/commentPost_Schema"
+            }
+          },
+          "400": {
+            "description": "找不到 ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "找不到 id，請重新確認"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "無效的 ID",
+            "schema": {
+              "$ref": "#/definitions/error_postId_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
+      },
       "patch": {
+        "tags": [
+          "動態貼文"
+        ],
+        "summary": "編輯貼文留言 API",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "輸入 Comment id",
+            "type": "string"
+          },
+          {
+            "name": "parameters_name",
+            "in": "body",
+            "description": "編輯留言的格式",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "comment": {
+                  "type": "string",
+                  "example": "你好"
+                }
+              }
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "編輯留言成功",
+            "schema": {
+              "$ref": "#/definitions/commentPost_Schema"
+            }
+          },
+          "400": {
+            "description": "找不到 ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "找不到 id，請重新確認"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "無效的 ID",
+            "schema": {
+              "$ref": "#/definitions/error_postId_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
+      }
+    },
+    "/api/users/check": {
+      "post": {
         "tags": [],
         "description": "",
         "parameters": [],
@@ -72,58 +631,481 @@
     },
     "/api/users/signup": {
       "post": {
-        "tags": [],
+        "tags": [
+          "會員管理驗證"
+        ],
+        "summary": "註冊帳號 API",
         "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "parameters_name",
+            "in": "body",
+            "description": "註冊帳號的格式",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "user01"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "example01@sample.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "a12345678"
+                },
+                "passwordConfirm": {
+                  "type": "string",
+                  "example": "a12345678"
+                }
+              }
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "註冊成功",
+            "schema": {
+              "$ref": "#/definitions/userLogin_Schema"
+            }
+          },
+          "400": {
+            "description": "操作錯誤會出現其中一個訊息",
+            "schema": {
+              "$ref": "#/definitions/error_signUp_Scheam"
+            }
+          }
+        }
       }
     },
     "/api/users/login": {
       "post": {
-        "tags": [],
+        "tags": [
+          "會員管理驗證"
+        ],
+        "summary": "登入帳號 API",
+        "description": "",
+        "parameters": [
+          {
+            "name": "parameters_name",
+            "in": "body",
+            "description": "登入帳號的格式",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "example01@sample.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "a12345678"
+                }
+              }
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "登入成功",
+            "schema": {
+              "$ref": "#/definitions/userStatus_Schema"
+            }
+          },
+          "400": {
+            "description": "操作錯誤會出現其中一個訊息",
+            "schema": {
+              "$ref": "#/definitions/error_login_Schema"
+            }
+          }
+        }
+      }
+    },
+    "/api/users/logout": {
+      "get": {
+        "tags": [
+          "會員管理驗證"
+        ],
+        "summary": "登出帳號 API",
         "description": "",
         "parameters": [],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "登出成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "data": {
+                  "type": "string",
+                  "example": ""
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
       }
     },
     "/api/users/forgotPassword": {
       "post": {
-        "tags": [],
+        "tags": [
+          "會員管理驗證"
+        ],
+        "summary": "忘記密碼 API",
         "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "parameters_name",
+            "in": "body",
+            "description": "忘記密碼 的格式",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "example01@sample.com"
+                }
+              }
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功寄出郵件，並寄驗證碼到此信箱",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "data": {
+                  "type": "string",
+                  "example": "成功寄出郵件"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "沒有此 email 帳號",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "沒有此 email 帳號"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
       }
     },
     "/api/users/resetPassword/{token}": {
       "patch": {
-        "tags": [],
+        "tags": [
+          "會員管理驗證"
+        ],
+        "summary": "重置密碼 API ",
         "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "parameters_name",
+            "in": "body",
+            "description": "忘記密碼 的格式",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "password": {
+                  "type": "string",
+                  "example": "a12345678"
+                },
+                "passwordConfirm": {
+                  "type": "string",
+                  "example": "a12345678"
+                }
+              }
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "重置密碼成功",
+            "schema": {
+              "$ref": "#/definitions/userStatus_Schema"
+            }
+          },
+          "400": {
+            "description": "無效的連結",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "無效的連結"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
       }
     },
     "/api/users/updatePassword": {
       "patch": {
-        "tags": [],
+        "tags": [
+          "會員管理驗證"
+        ],
+        "summary": "更新密碼 API",
         "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "parameters_name",
+            "in": "body",
+            "description": "更新密碼的格式",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "passwordCurrent": {
+                  "type": "string",
+                  "example": "a12345678"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "test1234"
+                },
+                "passwordConfirm": {
+                  "type": "string",
+                  "example": "test1234"
+                }
+              }
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "更新密碼成功",
+            "schema": {
+              "$ref": "#/definitions/userStatus_Schema"
+            }
+          },
+          "400": {
+            "description": "操作錯誤會出現其中一個訊息",
+            "schema": {
+              "$ref": "#/definitions/error_updatePassword_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
-    "/api/users/profile": {
+    "/api/users/myProfile": {
       "patch": {
-        "tags": [],
+        "tags": [
+          "會員功能"
+        ],
+        "summary": "修改個人資料 API",
+        "description": "",
+        "parameters": [
+          {
+            "name": "parameters_name",
+            "in": "body",
+            "description": "修改個人頁面的格式",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "avatar": {
+                  "type": "string",
+                  "example": "https://i.imgur.com/AngqqaD.jpg"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "柚子"
+                },
+                "personalInfo": {
+                  "type": "string",
+                  "example": "安安安"
+                }
+              }
+            },
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "修改個人資料成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "62ee6d4fdb480a3990f5d3ee"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "柚子"
+                    },
+                    "avatar": {
+                      "type": "string",
+                      "example": "https://i.imgur.com/AngqqaD.jpg"
+                    },
+                    "role": {
+                      "type": "string",
+                      "example": "user"
+                    },
+                    "personalInfo": {
+                      "type": "string",
+                      "example": "安安安"
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "名字不可為空",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "名字不可為空"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "會員功能"
+        ],
+        "summary": "取得個人資料 API",
         "description": "",
         "parameters": [],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "取得個人資料成功",
+            "schema": {
+              "$ref": "#/definitions/profileStatus_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
-    "/api/users/profile/{id}": {
+    "/api/users/otherProfile/{id}": {
       "get": {
-        "tags": [],
+        "tags": [
+          "會員功能"
+        ],
+        "summary": "其他使用者個人頁面 API",
         "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "輸入 User id",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取得其他使用者個人頁面成功",
+            "schema": {
+              "$ref": "#/definitions/getUserPosts_Schema"
+            }
+          },
+          "400": {
+            "description": "找不到 ID",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "找不到 id，請重新確認"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
     "/api/users/{id}/follows": {
@@ -144,10 +1126,48 @@
     },
     "/api/users/getFollowingList": {
       "get": {
-        "tags": [],
+        "tags": [
+          "會員按讚追蹤動態"
+        ],
+        "summary": "取得個人追蹤名單 API",
         "description": "",
         "parameters": [],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "取得個人追蹤名單成功",
+            "schema": {
+              "$ref": "#/definitions/followingStatus_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
+      }
+    },
+    "/api/users/getFollowersList": {
+      "get": {
+        "tags": [
+          "會員按讚追蹤動態"
+        ],
+        "summary": "取得個人粉絲名單 API",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "取得個人粉絲名單成功",
+            "schema": {
+              "$ref": "#/definitions/followersStatus_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
     "/api/upload/": {
@@ -157,7 +1177,1070 @@
         "parameters": [],
         "responses": {}
       }
+    },
+    "/api/auth/google": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/auth/google/callback": {
+      "get": {
+        "tags": [],
+        "description": "",
+        "parameters": [],
+        "responses": {}
+      }
     }
   },
-  "definitions": {}
+  "definitions": {
+    "error_signUp_Scheam": {
+      "type": "object",
+      "properties": {
+        "emailStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "Email 格式不正確"
+            }
+          }
+        },
+        "repeatEmailStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "Email 已有人使用，請重新註冊"
+            }
+          }
+        },
+        "typeStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "資料格式錯誤，請重新確認"
+            }
+          }
+        },
+        "validatorPasswordStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "密碼不一致，請重新確認"
+            }
+          }
+        },
+        "passwordStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "密碼不能低於 8 碼，並中英混合"
+            }
+          }
+        },
+        "colStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "欄位未填寫正確"
+            }
+          }
+        }
+      }
+    },
+    "error_updatePassword_Schema": {
+      "type": "object",
+      "properties": {
+        "currentPassword": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "當前的密碼不正確"
+            }
+          }
+        },
+        "typeStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "資料格式錯誤，請重新確認"
+            }
+          }
+        },
+        "validatorPasswordStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "密碼不一致，請重新確認"
+            }
+          }
+        },
+        "passwordStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "密碼不能低於 8 碼，並中英混合"
+            }
+          }
+        }
+      }
+    },
+    "error_login_Schema": {
+      "type": "object",
+      "properties": {
+        "emailStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "Email 格式不正確"
+            }
+          }
+        },
+        "userIncorrect": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "您的帳號或密碼不正確"
+            }
+          }
+        },
+        "typeStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "資料格式錯誤，請重新確認"
+            }
+          }
+        },
+        "colStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "欄位未填寫正確"
+            }
+          }
+        }
+      }
+    },
+    "error_noLoggin_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "Error"
+        },
+        "message": {
+          "type": "string",
+          "example": "您尚未登入"
+        }
+      }
+    },
+    "error_postId_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "Error"
+        },
+        "message": {
+          "type": "string",
+          "example": "無效的 ID，請重新確認"
+        }
+      }
+    },
+    "error_post_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "Error"
+        },
+        "message": {
+          "type": "string",
+          "example": "無法找到此貼文，請重新確認"
+        }
+      }
+    },
+    "error_deletePost_Schema": {
+      "type": "object",
+      "properties": {
+        "idStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "找不到 id，請重新確認"
+            }
+          }
+        },
+        "delStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "你無法刪除無他使用者貼文"
+            }
+          }
+        }
+      }
+    },
+    "error_updatePost_Schema": {
+      "type": "object",
+      "properties": {
+        "contentStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "Content 未填寫"
+            }
+          }
+        },
+        "editStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "你無法編輯無他使用者貼文"
+            }
+          }
+        },
+        "typeStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "資料格式錯誤，請重新確認"
+            }
+          }
+        },
+        "idStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "找不到 id，請重新確認"
+            }
+          }
+        }
+      }
+    },
+    "error_createPost_Schema": {
+      "type": "object",
+      "properties": {
+        "contentStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "Content 未填寫"
+            }
+          }
+        },
+        "userTypeStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "使用者 格式錯誤"
+            }
+          }
+        },
+        "userStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "無法找到使用者，請重新確認"
+            }
+          }
+        }
+      }
+    },
+    "getAllPosts_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "boolean",
+          "example": true
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "63866de7430a8841e0be9744"
+              },
+              "user": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "example": "63866d0c430a8841e0be9676"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Test"
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "example": "https://i.imgur.com/erdqB0d.jpg"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "user"
+                  },
+                  "personalInfo": {
+                    "type": "string",
+                    "example": "測試"
+                  }
+                }
+              },
+              "content": {
+                "type": "string",
+                "example": "嘿嘿"
+              },
+              "image": {
+                "type": "string",
+                "example": ""
+              },
+              "likes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "63866d0c430a8841e0be9676"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Test"
+                    },
+                    "avatar": {
+                      "type": "string",
+                      "example": "https://i.imgur.com/erdqB0d.jpg"
+                    },
+                    "role": {
+                      "type": "string",
+                      "example": "user"
+                    }
+                  }
+                }
+              },
+              "createdAt": {
+                "type": "string",
+                "example": "2022-11-29T20:39:03.174Z"
+              },
+              "comments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "638c480733ecc5b9b42c3715"
+                    },
+                    "comment": {
+                      "type": "string",
+                      "example": "嘿"
+                    },
+                    "userId": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "62ed1e72671067b1754e77cd"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "小宥"
+                        },
+                        "avatar": {
+                          "type": "string",
+                          "example": "https://i.imgur.com/Ls0oWis.jpg"
+                        },
+                        "role": {
+                          "type": "string",
+                          "example": "user"
+                        },
+                        "personalInfo": {
+                          "type": "string",
+                          "example": "終於成功!!!!"
+                        },
+                        "passwordResetExpires": {
+                          "type": "string",
+                          "example": "2022-09-29T22:58:14.425Z"
+                        }
+                      }
+                    },
+                    "postId": {
+                      "type": "string",
+                      "example": "63866de7430a8841e0be9744"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2022-12-04T07:11:03.819Z"
+                    }
+                  }
+                }
+              },
+              "id": {
+                "type": "string",
+                "example": "63866de7430a8841e0be9744"
+              }
+            }
+          }
+        }
+      }
+    },
+    "createPost_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "user": {
+              "type": "string",
+              "example": "62ee6d4fdb480a3990f5d3ee"
+            },
+            "content": {
+              "type": "string",
+              "example": "想睡覺"
+            },
+            "image": {
+              "type": "string",
+              "example": ""
+            },
+            "likes": {
+              "type": "array",
+              "items": {}
+            },
+            "_id": {
+              "type": "string",
+              "example": "63993f9282069f3f28815d92"
+            },
+            "createdAt": {
+              "type": "string",
+              "example": "2022-12-14T03:14:26.490Z"
+            },
+            "id": {
+              "type": "string",
+              "example": "63993f9282069f3f28815d92"
+            }
+          }
+        }
+      }
+    },
+    "post_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "63817bbfa009eb43df8c941b"
+            },
+            "user": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "62ee6d4fdb480a3990f5d3ee"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "柚子"
+                },
+                "avatar": {
+                  "type": "string",
+                  "example": "https://i.imgur.com/ImgTFX5.jpg"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "user"
+                },
+                "personalInfo": {
+                  "type": "string",
+                  "example": "我是一個人"
+                }
+              }
+            },
+            "content": {
+              "type": "string",
+              "example": "你好"
+            },
+            "image": {
+              "type": "string",
+              "example": "https://i.imgur.com/ORZG2h7.jpg"
+            },
+            "likes": {
+              "type": "array",
+              "items": {}
+            },
+            "createdAt": {
+              "type": "string",
+              "example": "2022-11-26T02:36:47.645Z"
+            },
+            "id": {
+              "type": "string",
+              "example": "63817bbfa009eb43df8c941b"
+            }
+          }
+        }
+      }
+    },
+    "getUserPosts_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "631c0fc16bf068ee763951c9"
+              },
+              "user": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "example": "62ee6d4fdb480a3990f5d3ee"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "柚子"
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "example": "https://i.imgur.com/ImgTFX5.jpg"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "user"
+                  },
+                  "personalInfo": {
+                    "type": "string",
+                    "example": "我是一個人"
+                  }
+                }
+              },
+              "content": {
+                "type": "string",
+                "example": "哈哈哈哈哈哈哈哈哈哈哈哈"
+              },
+              "image": {
+                "type": "string",
+                "example": ""
+              },
+              "likes": {
+                "type": "array",
+                "items": {}
+              },
+              "createdAt": {
+                "type": "string",
+                "example": "2022-09-10T04:17:05.036Z"
+              },
+              "comments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "631c123bd01e3324b68cd4b2"
+                    },
+                    "comment": {
+                      "type": "string",
+                      "example": "0 0 "
+                    },
+                    "userId": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "62ee6d4fdb480a3990f5d3ee"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "柚子"
+                        },
+                        "avatar": {
+                          "type": "string",
+                          "example": "https://i.imgur.com/ImgTFX5.jpg"
+                        },
+                        "role": {
+                          "type": "string",
+                          "example": "user"
+                        },
+                        "personalInfo": {
+                          "type": "string",
+                          "example": "我是一個人"
+                        }
+                      }
+                    },
+                    "postId": {
+                      "type": "string",
+                      "example": "631c0fc16bf068ee763951c9"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2022-09-10T04:27:39.034Z"
+                    }
+                  }
+                }
+              },
+              "id": {
+                "type": "string",
+                "example": "631c0fc16bf068ee763951c9"
+              }
+            }
+          }
+        }
+      }
+    },
+    "commentPost_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "639a911fda4373b7ac2a4d37"
+            },
+            "comment": {
+              "type": "string",
+              "example": "你好"
+            },
+            "userId": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "62ee6d4fdb480a3990f5d3ee"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "柚子"
+                },
+                "avatar": {
+                  "type": "string",
+                  "example": "https://i.imgur.com/ImgTFX5.jpg"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "user"
+                },
+                "personalInfo": {
+                  "type": "string",
+                  "example": "我是一個人"
+                }
+              }
+            },
+            "postId": {
+              "type": "string",
+              "example": "63993f9282069f3f28815d92"
+            },
+            "createdAt": {
+              "type": "string",
+              "example": "2022-12-15T03:14:39.770Z"
+            }
+          }
+        }
+      }
+    },
+    "postLike_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "postId": {
+          "type": "string",
+          "example": "63993f9282069f3f28815d92"
+        },
+        "userId": {
+          "type": "string",
+          "example": "62ee6d4fdb480a3990f5d3ee"
+        }
+      }
+    },
+    "userStatus_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "expires": {
+              "type": "string",
+              "example": "2022-12-22T03:14:13.692Z"
+            },
+            "token": {
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZWU2ZDRmZGI0ODBhMzk5MGY1ZDNlZSIsIm5hbWUiOiLmn5rlrZAiLCJpYXQiOjE2NzEwNzQwNTMsImV4cCI6MTY3MTY3ODg1M30.x-jTNVMOROAuHe-GyXDgPoTuIJWrEIZGTyILPvy2VA4"
+            },
+            "name": {
+              "type": "string",
+              "example": "user01"
+            },
+            "avatar": {
+              "type": "string",
+              "example": "https://i.imgur.com/ImgTFX5.jpg"
+            }
+          }
+        }
+      }
+    },
+    "profileStatus_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "62ee6d4fdb480a3990f5d3ee"
+            },
+            "name": {
+              "type": "string",
+              "example": "柚子"
+            },
+            "avatar": {
+              "type": "string",
+              "example": "https://i.imgur.com/AngqqaD.jpg"
+            },
+            "role": {
+              "type": "string",
+              "example": "user"
+            },
+            "followers": {
+              "type": "array",
+              "items": {}
+            },
+            "following": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "example": "62ee6c9adb480a3990f5d3ea"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "個性"
+                      },
+                      "avatar": {
+                        "type": "string",
+                        "example": "https://i.imgur.com/uCs714u.jpg"
+                      },
+                      "role": {
+                        "type": "string",
+                        "example": "user"
+                      },
+                      "personalInfo": {
+                        "type": "string",
+                        "example": "我只想睡覺123213"
+                      }
+                    }
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "example": "2022-09-10T11:09:34.701Z"
+                  }
+                }
+              }
+            },
+            "personalInfo": {
+              "type": "string",
+              "example": "安安安"
+            }
+          }
+        }
+      }
+    },
+    "followingStatus_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "62ee6c9adb480a3990f5d3ea"
+            },
+            "name": {
+              "type": "string",
+              "example": "柚123子"
+            },
+            "avatar": {
+              "type": "string",
+              "example": "https://i.imgur.com/AngqqaD.jpg"
+            },
+            "role": {
+              "type": "string",
+              "example": "user"
+            },
+            "following": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "example": "62ee6d4fdb480a3990f5d3ee"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "柚子"
+                      },
+                      "avatar": {
+                        "type": "string",
+                        "example": "https://i.imgur.com/AngqqaD.jpg"
+                      },
+                      "role": {
+                        "type": "string",
+                        "example": "user"
+                      },
+                      "personalInfo": {
+                        "type": "string",
+                        "example": "安安安"
+                      }
+                    }
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "example": "2022-09-10T18:28:15.259Z"
+                  }
+                }
+              }
+            },
+            "personalInfo": {
+              "type": "string",
+              "example": "安安安"
+            }
+          }
+        }
+      }
+    },
+    "followersStatus_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "example": "62ee6c9adb480a3990f5d3ea"
+            },
+            "name": {
+              "type": "string",
+              "example": "柚123子"
+            },
+            "avatar": {
+              "type": "string",
+              "example": "https://i.imgur.com/AngqqaD.jpg"
+            },
+            "role": {
+              "type": "string",
+              "example": "user"
+            },
+            "followers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "example": "6316af7fa47318ddbded1aba"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "小貓"
+                      },
+                      "avatar": {
+                        "type": "string",
+                        "example": "https://i.imgur.com/VKdzes7.jpg"
+                      },
+                      "role": {
+                        "type": "string",
+                        "example": "user"
+                      },
+                      "personalInfo": {
+                        "type": "string",
+                        "example": "我是一隻貓"
+                      }
+                    }
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "example": "2022-09-10T11:06:33.315Z"
+                  }
+                }
+              }
+            },
+            "personalInfo": {
+              "type": "string",
+              "example": "安安安"
+            }
+          }
+        }
+      }
+    }
+  }
 }

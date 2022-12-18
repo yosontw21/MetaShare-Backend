@@ -29,8 +29,7 @@ exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 		})
 		.sort(timeSort)
 		.limit(limitPost);
-	const result = `目前所有貼文總共有 ${posts.length} 筆`;
-	successHandle(posts, 200, res, result);
+	successHandle(posts, 200, res);
 });
 
 exports.getUserPosts = catchErrorAsync(async (req, res, next) => {
@@ -54,9 +53,8 @@ exports.getUserPosts = catchErrorAsync(async (req, res, next) => {
 	if (!userPosts) {
 		return appError(400, '找不到使用者資料 id 不正確', next);
 	}
-	const result = `目前個人貼文總共有 ${userPosts.length} 筆`;
 
-	successHandle(userPosts, 200, res, result);
+	successHandle(userPosts, 200, res);
 });
 
 exports.getPost = catchErrorAsync(async (req, res, next) => {
@@ -85,7 +83,7 @@ exports.createPost = catchErrorAsync(async (req, res, next) => {
 	let { content, image } = post;
 	const userId = await User.findById(id).exec();
 	if (!content || content == '') {
-		return appError(400, '內容 未填寫', next);
+		return appError(400, 'Content 未填寫', next);
 	}
 	if (!id) {
 		return appError(400, '使用者 格式錯誤', next);
@@ -193,20 +191,11 @@ exports.delLikesPost = catchErrorAsync(async (req, res, next) => {
 			$pull: { likes: userId }
 		}
 	);
-	res.status(201).json({
+	res.status(200).json({
 		status: 'success',
 		postId: _id,
 		userId
 	});
-});
-
-exports.getPostComments = catchErrorAsync(async (req, res, next) => {
-	const { id } = req.params;
-	const post = await Post.findById(id).populate({
-		path: 'comments'
-	});
-	const postComments = post.comments;
-	successHandle(postComments, 200, res);
 });
 
 exports.createPostComment = catchErrorAsync(async (req, res, next) => {
@@ -266,16 +255,17 @@ exports.delPostComment = catchErrorAsync(async (req, res, next) => {
 	const commentId = req.params.id;
 	const userId = req.user.id;
 
-	const comment = await Post.findById(commentId).populate({
-		path: 'user',
-		select: 'name avatar'
-	});
+	const commentUserId = await Comment.findById(commentId);
+	// console.log(commentUserId);
 
-	if (comment.user.id !== userId) {
-		return appError(400, '你無法刪除無他使用者貼文', next);
+	if (!commentUserId) {
+		return appError(400, '找不到 id，請重新確認', next);
 	}
 
-	const delComment = await Comment.findByIdAndDelete(commentId);
-
-	successHandle(delComment, 200, res);
+	if (commentUserId.userId.id !== userId) {
+		return appError(400, '你無法刪除其他使用者留言', next);
+	} else {
+		const delComment = await Comment.findByIdAndDelete(commentId);
+		successHandle(delComment, 200, res);
+	}
 });

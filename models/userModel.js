@@ -68,7 +68,7 @@ const userSchema = new mongoose.Schema(
 				validator: function(el) {
 					return el === this.password;
 				},
-				message: '密碼不一致，請重新確認'
+				message: '密碼不一致'
 			}
 		},
 		passwordResetToken: {

@@ -16,10 +16,10 @@ exports.getPosts = catchErrorAsync(async (req, res, next) => {
 	successHandle(posts, 200, res, result);
 });
 
-exports.getUsers = catchErrorAsync(async (req, res, next) => {
-	const Users = await User.find({}).sort({ name: 1 });
-	successHandle(Users, 200, res);
-});
+// exports.getUsers = catchErrorAsync(async (req, res, next) => {
+// 	const Users = await User.find({}).sort({ name: 1 });
+// 	successHandle(Users, 200, res);
+// });
 
 exports.getMyProfile = catchErrorAsync(async (req, res, next) => {
 	const myProfile = await User.findById(req.user.id);
@@ -52,7 +52,7 @@ exports.updateProfile = catchErrorAsync(async (req, res, next) => {
 		{
 			new: true
 		}
-	);
+	).select(['-following', '-followers']);
 	successHandle(editProfile, 200, res);
 });
 
@@ -112,6 +112,29 @@ exports.delFollow = catchErrorAsync(async (req, res, next) => {
 	});
 });
 
+exports.delFollowers = catchErrorAsync(async (req, res, next) => {
+	await User.updateOne(
+		{
+			_id: req.user.id
+		},
+		{
+			$pull: { followers: { user: req.params.id } }
+		}
+	);
+	await User.updateOne(
+		{
+			_id: req.params.id
+		},
+		{
+			$pull: { following: { user: req.user.id } }
+		}
+	);
+	res.status(200).json({
+		status: 'success',
+		message: '您已成功取消粉絲'
+	});
+});
+
 exports.getLikesList = catchErrorAsync(async (req, res, next) => {
 	const likesList = await Post.find(
 		{
@@ -132,7 +155,15 @@ exports.getLikesList = catchErrorAsync(async (req, res, next) => {
 exports.getFollowingList = catchErrorAsync(async (req, res, next) => {
 	const followingList = await User.findById({
 		_id: req.user.id
-	}).select('following');
+	}).select('-followers');
 
 	successHandle(followingList, 200, res);
+});
+
+exports.getFollowersList = catchErrorAsync(async (req, res, next) => {
+	const followersList = await User.findById({
+		_id: req.user.id
+	}).select('-following');
+
+	successHandle(followersList, 200, res);
 });

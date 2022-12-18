@@ -7,7 +7,7 @@ const resErrorProd = (err, res) => {
 		});
 	} else {
 		// 記錄 log 錯誤
-		console.error('程式出現異常', err);
+		// console.error('程式出現異常', err);
 		res.status(500).json({
 			status: 'Error',
 			message: '系統錯誤，請洽系統管理員'
@@ -27,28 +27,33 @@ const resErrorDev = (err, res) => {
 // 驗證錯誤
 const handleValidationError = (err) => {
 	const errors = Object.values(err.errors).map((el) => el.message);
+	err.status = 'Error';
 	err.message = `${errors.join('、')}，請重新確認!`;
 	err.isOperational = true;
 };
 
 const handleCastError = (err) => {
+	err.status = 'Error';
 	err.message = `無效的 ID，請重新確認`;
 	err.isOperational = true;
 };
 
 const handleConfirmEmail = (err) => {
+	err.status = 'Error';
 	err.message = `Email 已有人使用，請重新註冊`;
 	err.isOperational = true;
 };
 
 const handleSyntaxError = (err) => {
 	err.statusCode = 400;
+	err.status = 'Error';
 	err.message = `資料格式錯誤，請重新確認`;
 	err.isOperational = true;
 };
 
 const handleJWTError = (err) => {
 	err.statusCode = 401;
+	err.status = 'Error';
 	err.message = `無效的 Token，請重新確認`;
 	err.isOperational = true;
 };
