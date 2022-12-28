@@ -4,7 +4,7 @@
     "title": "MetaShare API",
     "description": "MetaShare 相關 API"
   },
-  "host": "localhost:3000",
+  "host": "https://metashare.onrender.com",
   "basePath": "/",
   "tags": [],
   "schemes": [
