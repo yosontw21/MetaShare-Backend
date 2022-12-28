@@ -42,7 +42,7 @@ postSchema.virtual('comments', {
 postSchema.pre(/^find/, function(next) {
 	this.populate({
 		path: 'user',
-		select: '-following -followers'
+		select: '-following -followers -email'
 	});
 	next();
 });
@@ -50,7 +50,7 @@ postSchema.pre(/^find/, function(next) {
 postSchema.pre(/^find/, function(next) {
 	this.populate({
 		path: 'likes',
-		select: '-following -followers -passwordResetToken -personalInfo '
+		select: '-following -followers -personalInfo -email'
 	});
 	next();
 });

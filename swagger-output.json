@@ -51,12 +51,6 @@
             "schema": {
               "$ref": "#/definitions/getAllPosts_Schema"
             }
-          },
-          "401": {
-            "description": "未登入狀態",
-            "schema": {
-              "$ref": "#/definitions/error_noLoggin_Schema"
-            }
           }
         },
         "security": [
@@ -623,10 +617,25 @@
     },
     "/api/users/check": {
       "post": {
-        "tags": [],
+        "tags": [
+          "會員管理驗證"
+        ],
+        "summary": "驗證是否登入 API",
         "description": "",
         "parameters": [],
-        "responses": {}
+        "responses": {
+          "401": {
+            "description": "未登入狀態",
+            "schema": {
+              "$ref": "#/definitions/error_noLoggin_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
     "/api/users/signup": {
@@ -669,7 +678,7 @@
           "201": {
             "description": "註冊成功",
             "schema": {
-              "$ref": "#/definitions/userLogin_Schema"
+              "$ref": "#/definitions/userStatus_Schema"
             }
           },
           "400": {
@@ -1099,6 +1108,12 @@
                 "name": "main"
               }
             }
+          },
+          "500": {
+            "description": "無效的 ID",
+            "schema": {
+              "$ref": "#/definitions/error_postId_Schema"
+            }
           }
         },
         "security": [
@@ -1108,20 +1123,173 @@
         ]
       }
     },
-    "/api/users/{id}/follows": {
-      "delete": {
-        "tags": [],
+    "/api/users/{id}/following": {
+      "post": {
+        "tags": [
+          "會員按讚追蹤動態"
+        ],
+        "summary": "追蹤朋友 API",
         "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "追蹤朋友成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "您已成功追蹤"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "無法追蹤自己",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Error"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "您無法追蹤自己"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "會員按讚追蹤動態"
+        ],
+        "summary": "取消追蹤朋友 API",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消追蹤朋友",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "您已取消追蹤朋友"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
+      }
+    },
+    "/api/users/{id}/followers": {
+      "delete": {
+        "tags": [
+          "會員按讚追蹤動態"
+        ],
+        "summary": "取消粉絲關注 API",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消粉絲關注",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "您已取消粉絲關注"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
     "/api/users/getLikesList": {
       "get": {
-        "tags": [],
+        "tags": [
+          "會員按讚追蹤動態"
+        ],
+        "summary": "取得個人按讚列表 API",
         "description": "",
         "parameters": [],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "取得個人按讚列表成功",
+            "schema": {
+              "$ref": "#/definitions/likesListStatus_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     },
     "/api/users/getFollowingList": {
@@ -1172,30 +1340,99 @@
     },
     "/api/upload/": {
       "post": {
-        "tags": [],
+        "tags": [
+          "會員功能"
+        ],
+        "summary": "上傳圖片 API",
         "description": "",
-        "parameters": [],
-        "responses": {}
-      }
-    },
-    "/api/auth/google": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {}
-      }
-    },
-    "/api/auth/google/callback": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "parameters_name",
+            "in": "formData",
+            "type": "file",
+            "description": "上傳圖片"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "上傳圖片成功",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "https://i.imgur.com/example.png"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "無法追蹤自己",
+            "schema": {
+              "$ref": "#/definitions/error_uploadImage_Schema"
+            }
+          }
+        },
+        "security": [
+          {
+            "JSON Web Token": []
+          }
+        ]
       }
     }
   },
   "definitions": {
+    "error_uploadImage_Schema": {
+      "type": "object",
+      "properties": {
+        "typeStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "檔案格式錯誤，僅限上傳 jpg、jpeg 與 png 格式"
+            }
+          }
+        },
+        "emptyStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "請選擇一張圖片上傳"
+            }
+          }
+        },
+        "sizeStatus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "Error"
+            },
+            "message": {
+              "type": "string",
+              "example": "圖片檔案過大，僅限 2mb 以下檔案"
+            }
+          }
+        }
+      }
+    },
     "error_signUp_Scheam": {
       "type": "object",
       "properties": {
@@ -2237,6 +2474,60 @@
             "personalInfo": {
               "type": "string",
               "example": "安安安"
+            }
+          }
+        }
+      }
+    },
+    "likesListStatus_Schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "639f375b184125abc9d40e97"
+              },
+              "user": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "example": "62ee6c9adb480a3990f5d3ea"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "柚123子"
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "example": "https://i.imgur.com/AIYLddJ.jpg"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "user"
+                  },
+                  "personalInfo": {
+                    "type": "string",
+                    "example": "安安安"
+                  }
+                }
+              },
+              "createdAt": {
+                "type": "string",
+                "example": "2022-12-18T15:52:59.859Z"
+              },
+              "id": {
+                "type": "string",
+                "example": "639f375b184125abc9d40e97"
+              }
             }
           }
         }

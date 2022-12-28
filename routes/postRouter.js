@@ -29,10 +29,6 @@ router.get(
       description: '取得所有貼文成功',
 			schema: { $ref: "#/definitions/getAllPosts_Schema" }
     }
-		#swagger.responses[401] = {
-      description: '未登入狀態',
-			schema: { $ref: "#/definitions/error_noLoggin_Schema" }
-    }
    */
 	postController.getAllPosts
 );

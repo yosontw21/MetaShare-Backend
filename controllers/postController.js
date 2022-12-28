@@ -20,12 +20,7 @@ exports.getAllPosts = catchErrorAsync(async (req, res, next) => {
 			select: 'name avatar'
 		})
 		.populate({
-			path: 'comments',
-			select: 'comment createdAt user'
-		})
-		.populate({
-			path: 'likes',
-			select: 'name avatar'
+			path: 'comments'
 		})
 		.sort(timeSort)
 		.limit(limitPost);
@@ -44,8 +39,7 @@ exports.getUserPosts = catchErrorAsync(async (req, res, next) => {
 			select: 'name avatar'
 		})
 		.populate({
-			path: 'comments',
-			select: 'comment user createdAt'
+			path: 'comments'
 		})
 		.sort(timeSort)
 		.limit(limitPost);
@@ -66,8 +60,7 @@ exports.getPost = catchErrorAsync(async (req, res, next) => {
 			select: 'name avatar'
 		})
 		.populate({
-			path: 'comments',
-			select: 'comment user'
+			path: 'comments'
 		});
 
 	if (!post) {
@@ -217,10 +210,10 @@ exports.createPostComment = catchErrorAsync(async (req, res, next) => {
 		comment
 	});
 
-	await Comment.populate(newComment, {
-		path: 'user',
-		select: '_id -following -followers'
-	});
+	// await Comment.populate(newComment, {
+	// 	path: 'user',
+	// 	select: '_id -following -followers'
+	// });
 
 	res.status(201).json({
 		status: 'success',

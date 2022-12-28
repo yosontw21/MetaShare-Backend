@@ -3,7 +3,24 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 
-router.post('/check', authController.isAuth, authController.check);
+router.post(
+	'/check',
+	authController.isAuth,
+	/**
+		* #swagger.tags = ['會員管理驗證']
+		* #swagger.summary = '驗證是否登入 API'
+		* #swagger.security = [{ "JSON Web Token": [] }]
+		*/
+
+	/**
+		#swagger.responses[401] = {
+      description: '未登入狀態',
+			schema: { $ref: "#/definitions/error_noLoggin_Schema" }
+    }
+   */
+
+	authController.check
+);
 
 router.post(
 	'/signup',
@@ -26,7 +43,7 @@ router.post(
 	/**
 		#swagger.responses[201] = {
       description: '註冊成功',
-			schema: { $ref: "#/definitions/userLogin_Schema"}
+			schema: { $ref: "#/definitions/userStatus_Schema"}
     }
 		#swagger.responses[400] = {
       description: '操作錯誤會出現其中一個訊息',
@@ -266,7 +283,7 @@ router.get(
 					status: 'Error',
 					message: '找不到 id，請重新確認' }
     	}
-			#swagger.response[500] = {
+			#swagger.responses[500] = {
 				description: '無效的 ID',
 				schema: { $ref: "#/definitions/error_postId_Schema" }
     	}
@@ -275,13 +292,92 @@ router.get(
 );
 
 router
-	.route('/:id/follows')
-	.post(authController.isAuth, userController.addFollow)
-	.delete(authController.isAuth, userController.delFollow);
+	.route('/:id/following')
+	.post(
+		authController.isAuth,
+		/** 
+			* #swagger.tags = ['會員按讚追蹤動態']
+			* #swagger.summary = '追蹤朋友 API'
+			* #swagger.security = [{ "JSON Web Token": [] }]
 
-router.delete('/:id/followers',authController.isAuth, userController.delFollowers);
+		*/
+		/**
+		 	#swagger.responses[200] = {
+				description: '追蹤朋友成功',
+				schema: {
+					status: "success",
+					message: "您已成功追蹤"
+				}
+			}
+			#swagger.responses[400] = {
+				description: '無法追蹤自己',
+				schema: {
+					status: "Error",
+					message: "您無法追蹤自己"
+				}
+			}
+		*/
 
-router.get('/getLikesList', authController.isAuth, userController.getLikesList);
+		userController.addFollow
+	)
+	.delete(
+		authController.isAuth,
+		/** 
+			* #swagger.tags = ['會員按讚追蹤動態']
+			* #swagger.summary = '取消追蹤朋友 API'
+			* #swagger.security = [{ "JSON Web Token": [] }]
+
+		*/
+		/**
+		 	#swagger.responses[200] = {
+				description: '取消追蹤朋友',
+				schema: {
+					status: "success",
+					message: "您已取消追蹤朋友"
+				}				 
+			}
+		*/
+
+		userController.delFollow
+	);
+
+router.delete(
+	'/:id/followers',
+	authController.isAuth,
+	/** 
+			* #swagger.tags = ['會員按讚追蹤動態']
+			* #swagger.summary = '取消粉絲關注 API'
+			* #swagger.security = [{ "JSON Web Token": [] }]
+
+		*/
+	/**
+		 	#swagger.responses[200] = {
+				description: '取消粉絲關注',
+				schema: { 
+					status: "success",
+					message: "您已取消粉絲關注" 
+				}
+			}
+	*/
+
+	userController.delFollowers
+);
+
+router.get('/getLikesList', authController.isAuth,
+	/** 
+			* #swagger.tags = ['會員按讚追蹤動態']
+			* #swagger.summary = '取得個人按讚列表 API'
+			* #swagger.security = [{ "JSON Web Token": [] }]
+
+		*/
+	/**
+		 	#swagger.responses[200] = {
+				description: '取得個人按讚列表成功',
+				schema: { $ref: "#/definitions/likesListStatus_Schema" }
+			}
+	*/
+
+userController.getLikesList);
 
 router.get(
 	'/getFollowingList',
@@ -320,6 +416,5 @@ router.get(
 );
 
 // router.get('/', authController.isAuth, userController.getUsers);
-// router.get('/check', authController.isAuth, authController.check);
 
 module.exports = router;

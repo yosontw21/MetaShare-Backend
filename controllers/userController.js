@@ -12,8 +12,7 @@ exports.getPosts = catchErrorAsync(async (req, res, next) => {
 		return appError(400, '找不到使用者資訊', next);
 	}
 
-	const result = `目前貼文總共有 ${posts.length} 筆`;
-	successHandle(posts, 200, res, result);
+	successHandle(posts, 200, res);
 });
 
 // exports.getUsers = catchErrorAsync(async (req, res, next) => {

@@ -5,7 +5,7 @@ const dos = {
 		title: 'MetaShare API',
 		description: 'MetaShare 相關 API'
 	},
-	host: 'localhost:3000',
+	host: 'https://metashare.onrender.com',
 	schemes: ['http', 'https'],
 	securityDefinitions: {
 		'JSON Web Token': {
@@ -20,6 +20,20 @@ const dos = {
 
 	// response messages
 	definitions: {
+		error_uploadImage_Schema: {
+			typeStatus: {
+				status: 'Error',
+				message: '檔案格式錯誤，僅限上傳 jpg、jpeg 與 png 格式'
+			},
+			emptyStatus: {
+				status: 'Error',
+				message: '請選擇一張圖片上傳'
+			},
+			sizeStatus: {
+				status: 'Error',
+				message: '圖片檔案過大，僅限 2mb 以下檔案'
+			}
+		},
 		error_signUp_Scheam: {
 			emailStatus: {
 				status: 'Error',
@@ -380,6 +394,23 @@ const dos = {
 				],
 				personalInfo: '安安安'
 			}
+		},
+		likesListStatus_Schema: {
+			status: 'success',
+			data: [
+				{
+					_id: '639f375b184125abc9d40e97',
+					user: {
+						_id: '62ee6c9adb480a3990f5d3ea',
+						name: '柚123子',
+						avatar: 'https://i.imgur.com/AIYLddJ.jpg',
+						role: 'user',
+						personalInfo: '安安安'
+					},
+					createdAt: '2022-12-18T15:52:59.859Z',
+					id: '639f375b184125abc9d40e97'
+				}
+			]
 		}
 	}
 };
